@@ -9,8 +9,8 @@ const SUPABASE_URL = 'https://ffggwhdtefummpzfspvb.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_3UVcflML5_szZeiW0DvCzw_vOzTOC_W';
 
 const CONFIGURED =
-    !SUPABASE_URL.includes('https://ffggwhdtefummpzfspvb.supabase.co') &&
-    !SUPABASE_PUBLISHABLE_KEY.includes('sb_publishable_3UVcflML5_szZeiW0DvCzw_vOzTOC_W');
+    SUPABASE_URL.startsWith('https://') &&
+    SUPABASE_PUBLISHABLE_KEY.startsWith('sb_publishable_');
 
 const db = CONFIGURED
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
