@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+html { scroll-behavior: smooth; }
+button:disabled { opacity: .6; cursor: not-allowed; }
+.status-pill { display:inline-flex; align-items:center; padding:.2rem .55rem; border-radius:9999px; font-size:.7rem; font-weight:700; }
