@@ -894,6 +894,14 @@ async function initializeApp() {
     const { data: { session } } = await db.auth.getSession();
     await syncCurrentUser(session?.user || null);
 
+    const recoveryMode =
+    new URLSearchParams(window.location.search).get('recovery') === '1';
+    
+    if (recoveryMode && session?.user) {
+        updateAuthUI();
+        switchTab('nova-senha');
+    }
+
     await Promise.all([loadArticles(), loadBooks(), loadPolls()]);
     if (currentUser) await Promise.all([loadSavedArticles(), loadMyLoans(), loadUserVotes()]);
 
@@ -908,7 +916,10 @@ async function initializeApp() {
         setTimeout(async () => {
             if (event === 'PASSWORD_RECOVERY') {
                 currentUser = sessionState?.user || null;
-                currentProfile = currentUser ? await loadProfile(currentUser.id) : null;
+                currentProfile = currentUser
+                    ? await loadProfile(currentUser.id)
+                    : null;
+            
                 updateAuthUI();
                 switchTab('nova-senha');
                 return;
