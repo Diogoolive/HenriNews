@@ -14,124 +14,172 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head>
     <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
         <!-- [RN06] BARRA DE NAVEGAÇÃO FIXA -->
-         <nav class="bg-indigo-600 text-white sticky top-0 z-50 shadow-md">
+        <nav class="bg-indigo-600 text-white sticky top-0 z-50 shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <div class="flex items-center gap-2 cursor-pointer" onclick="switchTab('feed')">
+                <div class="flex items-center justify-between h-16 gap-3">
+                    <div class="flex items-center gap-2 cursor-pointer shrink-0" onclick="switchTab('feed')">
                         <i class="w-8 h-8 text-indigo-200" data-lucide="newspaper"></i>
                         <span class="text-xl font-bold tracking-tight">HenriNews</span>
                     </div>
-                    <div class="hidden md:flex space-x-4 items-center">
-                        <button class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1" onclick="switchTab('feed')"><i class="w-4 h-4" data-lucide="home"></i> Feed</button>
-                        <button class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1" onclick="switchTab('biblioteca')"><i class="w-4 h-4" data-lucide="book-open"></i> Biblioteca</button>
-                        <button class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1" onclick="switchTab('enquetes')"><i class="w-4 h-4" data-lucide="vote"></i> Enquetes</button>
-                        <button class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1" onclick="switchTab('instituicao')"><i class="w-4 h-4" data-lucide="school"></i> Gestão</button>
-                        <button class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1" onclick="switchTab('ajuda')"><i class="w-4 h-4" data-lucide="help-circle"></i> Ajuda</button>
-                        <!-- Botão condicional de Admin -->
-                        <button class="hidden bg-amber-500 hover:bg-amber-600 text-slate-900 px-3 py-2 rounded-md text-sm font-semibold transition flex items-center gap-1" id="nav-admin-btn" onclick="switchTab('admin')"><i class="w-4 h-4" data-lucide="shield-alert"></i> Painel Gestor</button>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="text-xs bg-indigo-800 px-2 py-1 rounded text-indigo-200 font-medium" id="user-status-badge">Visitante</span>
-                        <button class="bg-indigo-700 text-white hover:bg-indigo-800 px-4 py-2 rounded-md text-sm font-medium transition" id="auth-register-btn" onclick="switchTab('cadastro')">Cadastrar</button>
-                        <button class="bg-white text-indigo-600 hover:bg-indigo-50 px-4 py-2 rounded-md text-sm font-medium shadow transition" id="auth-action-btn" onclick="switchTab('login')">Entrar</button>
-                    </div>
+
+        
+                <!-- Navegação para computador/tablet -->
+                <div class="hidden md:flex space-x-1 lg:space-x-4 items-center">
+                    <button class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1" onclick="switchTab('feed')"><i class="w-4 h-4" data-lucide="home"></i> Feed</button>
+                    <button class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1" onclick="switchTab('biblioteca')"><i class="w-4 h-4" data-lucide="book-open"></i> Biblioteca</button>
+                    <button class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1" onclick="switchTab('enquetes')"><i class="w-4 h-4" data-lucide="vote"></i> Enquetes</button>
+                    <button class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1" onclick="switchTab('instituicao')"><i class="w-4 h-4" data-lucide="school"></i> Gestão</button>
+                    <button class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1" onclick="switchTab('ajuda')"><i class="w-4 h-4" data-lucide="help-circle"></i> Ajuda</button>
+                    <button class="hidden bg-amber-500 hover:bg-amber-600 text-slate-900 px-3 py-2 rounded-md text-sm font-semibold transition flex items-center gap-1" id="nav-admin-btn" onclick="switchTab('admin')">
+                        <i class="w-4 h-4" data-lucide="shield-alert"></i> Painel Gestor
+                    </button>
+                </div>
+
+                <!-- Conta: aparece apenas no computador -->
+                <div class="hidden md:flex items-center gap-2 lg:gap-4 shrink-0">
+                    <span class="text-xs bg-indigo-800 px-2 py-1 rounded text-indigo-200 font-medium max-w-32 truncate" id="user-status-badge">Visitante</span>
+                    <button class="bg-indigo-700 text-white hover:bg-indigo-800 px-3 lg:px-4 py-2 rounded-md text-sm font-medium transition" id="auth-register-btn" onclick="switchTab('cadastro')">Cadastrar</button>
+                    <button class="bg-white text-indigo-600 hover:bg-indigo-50 px-3 lg:px-4 py-2 rounded-md text-sm font-medium shadow transition" id="auth-action-btn" onclick="switchTab('login')">Entrar</button>
+                </div>
+
+                <!-- Botão do menu para celular -->
+                <button
+                id="mobile-menu-btn"
+                class="md:hidden p-2 rounded-lg hover:bg-indigo-700 transition shrink-0"
+                onclick="toggleMobileMenu()"
+                aria-label="Abrir menu"
+                aria-expanded="false"
+                type="button"
+                >
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Menu para celular -->
+        <div id="mobile-menu" class="hidden md:hidden pb-4 space-y-2 border-t border-indigo-500/40 pt-3">
+            <button onclick="mobileNavigate('feed')" class="mobile-nav-item">
+                <i data-lucide="home" class="w-5 h-5"></i> Feed
+            </button>
+            <button onclick="mobileNavigate('biblioteca')" class="mobile-nav-item">
+                <i data-lucide="book-open" class="w-5 h-5"></i> Biblioteca
+            </button>
+            <button onclick="mobileNavigate('enquetes')" class="mobile-nav-item">
+                <i data-lucide="vote" class="w-5 h-5"></i> Enquetes
+            </button>
+            <button onclick="mobileNavigate('instituicao')" class="mobile-nav-item">
+                <i data-lucide="school" class="w-5 h-5"></i> Gestão
+            </button>
+            <button onclick="mobileNavigate('ajuda')" class="mobile-nav-item">
+                <i data-lucide="help-circle" class="w-5 h-5"></i> Ajuda
+            </button>
+            <button id="mobile-admin-btn" onclick="mobileNavigate('admin')" class="hidden mobile-nav-item bg-amber-500 text-slate-900 font-semibold hover:bg-amber-600">
+            <i data-lucide="shield-alert" class="w-5 h-5"></i> Painel Gestor</button>
+
+            <div class="border-t border-indigo-500/40 pt-3 mt-3 space-y-2">
+                <div class="flex items-center justify-between gap-3 px-3">
+                    <span class="text-xs bg-indigo-800 px-2 py-1 rounded text-indigo-200 font-medium truncate" id="mobile-user-status-badge">Visitante</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 px-3">
+                    <button class="bg-indigo-700 text-white hover:bg-indigo-800 px-4 py-2.5 rounded-lg text-sm font-medium transition" id="mobile-auth-register-btn" onclick="mobileNavigate('cadastro')">Cadastrar</button>
+                    <button class="bg-white text-indigo-600 hover:bg-indigo-50 px-4 py-2.5 rounded-lg text-sm font-medium shadow transition" id="mobile-auth-action-btn" onclick="mobileNavigate('login')">Entrar</button>
                 </div>
             </div>
-        </nav>
-
-
-
-        <!-- 1 CONTEÚDO PRINCIPAL (SPA - Single Page Application Simulada) -->
-        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- ==================== TELA DE FEED (NOTÍCIAS) ==================== -->
-        <section class="tab-content active space-y-8" id="tab-feed">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 border-slate-200 gap-4">
-                <div>
-                    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Feed de Notícias</h1>
-                    <p class="text-slate-500">Fique por dentro de tudo o que acontece na nossa escola.</p>
-                </div>
-                <div class="flex gap-2">
-                    <button class="bg-indigo-100 text-indigo-700 font-semibold px-4 py-2 rounded-lg text-sm" onclick="filterArticles('all')">Todas</button>
-                    <button class="bg-white border text-slate-600 font-medium px-4 py-2 rounded-lg text-sm hover:bg-slate-50 transition flex items-center gap-1" onclick="filterArticles('saved')"><i class="w-4 h-4" data-lucide="bookmark"></i> Salvas para Ler Depois</button>
-                </div>
+        </div>
+    </div>
+</nav>
+<!-- CONTEÚDO PRINCIPAL (SPA - Single Page Application Simulada) -->
+<main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+    <!-- ==================== TELA DE FEED (NOTÍCIAS) ==================== -->
+    <section class="tab-content active space-y-8" id="tab-feed">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 border-slate-200 gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Feed de Notícias</h1>
+                <p class="text-slate-500">Fique por dentro de tudo o que acontece na nossa escola.</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="articles-container">
-                <!-- Injetado dinamicamente via JS -->
+            <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                <button class="w-full sm:w-auto bg-indigo-100 text-indigo-700 font-semibold px-4 py-2 rounded-lg text-sm" onclick="filterArticles('all')">Todas</button>
+                <button class="w-full sm:w-auto bg-white border text-slate-600 font-medium px-4 py-2 rounded-lg text-sm hover:bg-slate-50 transition flex items-center justify-center gap-1" onclick="filterArticles('saved')">
+                    <i class="w-4 h-4" data-lucide="bookmark"></i> Salvas para Ler Depois
+                </button>
             </div>
-        </section>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="articles-container">
+            <!-- Injetado dinamicamente via JS -->
+        </div>
+    </section>
 
 
 
-        <!-- ==================== 2 DETALHE DA NOTÍCIA ==================== -->
-        <section class="tab-content max-w-3xl mx-auto space-y-6" id="tab-artigo-detalhe">
-            <button class="text-indigo-600 font-medium flex items-center gap-1 hover:underline" onclick="switchTab('feed')"><i class="w-4 h-4" data-lucide="arrow-left"></i> Voltar para o feed</button>
-            <div id="article-detail-content">
-                <!-- Injetado dinamicamente via JS -->
+    <!-- ==================== DETALHE DA NOTÍCIA ==================== -->
+    <section class="tab-content max-w-3xl mx-auto space-y-6" id="tab-artigo-detalhe">
+        <button class="text-indigo-600 font-medium flex items-center gap-1 hover:underline" onclick="switchTab('feed')">
+            <i class="w-4 h-4" data-lucide="arrow-left"></i> Voltar para o feed
+        </button>
+        <div id="article-detail-content">
+            <!-- Injetado dinamicamente via JS -->
+        </div>
+    </section>
+
+
+
+
+    <!-- ==================== TELA DE LOGIN ==================== -->
+    <section class="tab-content max-w-md mx-auto bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6 my-4 sm:my-12" id="tab-login">
+        <div class="text-center">
+            <h2 class="text-2xl font-bold text-slate-900">Acesse sua conta</h2>
+            <p class="text-sm text-slate-500 mt-1">Entre para interagir, votar e solicitar livros</p>
+        </div>
+        <form class="space-y-4" onsubmit="handleLogin(event)">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">E-mail</label>
+                <input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="login-email" placeholder="voce@escola.com" required="" type="email"/>
             </div>
-        </section>
-
-
-
-
-        <!-- ==================== 3 TELA DE LOGIN ==================== -->
-        <section class="tab-content max-w-md mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6 my-12" id="tab-login">
-            <div class="text-center">
-                <h2 class="text-2xl font-bold text-slate-900">Acesse sua conta</h2>
-                <p class="text-sm text-slate-500 mt-1">Entre para interagir, votar e solicitar livros</p>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Senha</label>
+                <input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="login-senha" minlength="8" placeholder="••••••••" required="" type="password"/>
             </div>
-            <form class="space-y-4" onsubmit="handleLogin(event)">
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">E-mail</label>
-                    <input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="login-email" placeholder="voce@escola.com" required="" type="email"/>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Senha</label>
-                    <input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="login-senha" minlength="8" placeholder="••••••••" required="" type="password"/>
-                </div>
-                <div class="flex justify-between items-center text-sm">
-                    <button class="text-indigo-600 hover:underline" onclick="switchTab('recuperar')" type="button">Esqueceu a senha?</button>
-                    <button class="text-slate-600 hover:underline" onclick="switchTab('cadastro')" type="button">Criar conta</button>
-                </div>
-                <button class="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition shadow-sm" type="submit">Entrar</button>
-            </form>
-        </section>
-
-
-
-        <!-- ==================== 4 TELA DE CADASTRO ==================== -->
-        <section class="tab-content max-w-md mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6 my-12" id="tab-cadastro">
-            <div class="text-center">
-                <h2 class="text-2xl font-bold text-slate-900">Crie sua conta escolar</h2>
-                <p class="text-sm text-slate-500 mt-1">Participe ativamente do HenriNews</p>
+            <div class="flex flex-col xs:flex-row gap-3 sm:flex-row sm:justify-between sm:items-center text-sm">
+                <button class="text-indigo-600 hover:underline" onclick="switchTab('recuperar')" type="button">Esqueceu a senha?</button>
+                <button class="text-slate-600 hover:underline" onclick="switchTab('cadastro')" type="button">Criar conta</button>
             </div>
-            <form class="space-y-4" onsubmit="handleRegister(event)">
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Nome Completo</label>
-                    <input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="register-nome" placeholder="Seu nome completo" required="" type="text"/>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">E-mail</label>
-                    <input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="register-email" placeholder="seu-email@escola.com" required="" type="email"/>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Criar Senha</label>
-                    <input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="register-senha" minlength="8" placeholder="••••••••" required="" type="password"/>
-                </div>
-                <!-- Campo invisível por padrão para manter compatibilidade com seu script.js -->
-                <button class="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition shadow-sm" type="submit">Finalizar Cadastro</button>
-                <p class="text-xs text-slate-500 text-center">A conta será criada como Aluno. Permissões de gestor são definidas somente no banco de dados.</p>
-            </form>
+            <button class="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition shadow-sm" type="submit">Entrar</button>
+        </form>
+    </section>
+
+
+    <!-- ==================== TELA DE CADASTRO ==================== -->
+    <section class="tab-content max-w-md mx-auto bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6 my-4 sm:my-12" id="tab-cadastro">
+        <div class="text-center">
+            <h2 class="text-2xl font-bold text-slate-900">Crie sua conta escolar</h2>
+            <p class="text-sm text-slate-500 mt-1">Participe ativamente do HenriNews</p>
+        </div>
+        <form class="space-y-4" onsubmit="handleRegister(event)">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Nome Completo</label>
+                <input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="register-nome" placeholder="Seu nome completo" required="" type="text"/>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">E-mail</label>
+                <input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="register-email" placeholder="seu-email@escola.com" required="" type="email"/>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Criar Senha</label>
+                <input class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" id="register-senha" minlength="8" placeholder="••••••••" required="" type="password"/>
+            </div>
+            <!-- Campo invisível por padrão para manter compatibilidade com seu script.js -->
+
+            <button class="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition shadow-sm" type="submit">Finalizar Cadastro</button>
+            <p class="text-xs text-slate-500 text-center">A conta será criada como Aluno. Permissões de gestor são definidas somente no banco de dados.</p></form>
             <div class="text-center text-sm">
                 <button class="text-indigo-600 hover:underline" onclick="switchTab('login')" type="button">Já tem uma conta? Entrar</button>
             </div>
         </section>
-        
-        
-        
         <!-- ==================== TELA DE CADASTRO ==================== -->
-        
+
+
+
         <!-- ==================== TELA DE RECUPERAR SENHA ==================== -->
-        <section class="tab-content max-w-md mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6 my-12" id="tab-recuperar">
+        <section class="tab-content max-w-md mx-auto bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6 my-4 sm:my-12" id="tab-recuperar">
             <div class="text-center">
                 <h2 class="text-2xl font-bold text-slate-900">Recuperar senha</h2>
                 <p class="text-sm text-slate-500 mt-1">Informe seu e-mail cadastrado para redefinir sua senha.</p>
@@ -144,7 +192,7 @@
                 <button class="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl hover:bg-indigo-700 transition shadow-sm" type="submit">Enviar Instruções</button>
                 <button class="w-full bg-slate-100 text-slate-700 font-medium py-2.5 rounded-xl hover:bg-slate-200 transition text-sm" onclick="switchTab('login')" type="button">Voltar para o Login</button>
             </form>
-        </section><section class="tab-content max-w-md mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6 my-12" id="tab-nova-senha">
+        </section><section class="tab-content max-w-md mx-auto bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6 my-4 sm:my-12" id="tab-nova-senha">
             <div class="text-center">
                 <h2 class="text-2xl font-bold text-slate-900">Definir nova senha</h2>
                 <p class="text-sm text-slate-500 mt-1">Escolha uma nova senha para sua conta.</p>
@@ -163,10 +211,11 @@
         </section>
 
 
+        
+
 
 
         <!-- ==================== TELA DA BIBLIOTECA ESCOLAR ==================== -->
-
         <section class="tab-content space-y-8" id="tab-biblioteca">
             <div class="border-b pb-4 border-slate-200">
                 <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Biblioteca Digital</h1>
@@ -196,107 +245,104 @@
                     <p class="text-sm text-slate-500">Acompanhe pedidos, prazo de devolução e status.</p>
                 </div>
                 <div class="space-y-3" id="my-loans-container"></div>
-            </div>
-        </section>
-
-
+            </div></section>
             <!-- ==================== TELA DE CONFIRMAÇÃO DE EMPRÉSTIMO ==================== -->
-            <section class="tab-content max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6" id="tab-emprestimo-confirmacao">
+            <section class="tab-content max-w-xl mx-auto bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6" id="tab-emprestimo-confirmacao">
                 <div class="text-center space-y-2">
-                    <div class="inline-flex items-center justify-center p-3 bg-emerald-50 text-emerald-600 
-                    rounded-full">
-                    <i class="w-10 h-10" data-lucide="check-circle-2"></i>
+                    <div class="inline-flex items-center justify-center p-3 bg-emerald-50 text-emerald-600 rounded-full">
+                        <i class="w-10 h-10" data-lucide="check-circle-2"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900">Empréstimo Solicitado!</h2>
+                    <p class="text-slate-500 text-sm">Guarde os detalhes abaixo para a retirada do exemplar.</p>
                 </div>
-                <h2 class="text-2xl font-bold text-slate-900">Empréstimo Solicitado!</h2>
-                <p class="text-slate-500 text-sm">Guarde os detalhes abaixo para a retirada do exemplar.</p>
-            </div>
-            <div class="bg-slate-50 p-6 rounded-xl border border-slate-200/60 space-y-3 text-sm" id="loan-details-box">
-                <!-- Injetado dinamicamente via JS -->
-            </div>
-            <div class="flex gap-3">
-                <button class="flex-1 bg-indigo-600 text-white font-medium py-2.5 rounded-xl hover:bg-indigo-700 transition text-center text-sm shadow-sm" onclick="switchTab('biblioteca')">Voltar para Biblioteca</button>
-            </div>
-        </section>
+                <div class="bg-slate-50 p-4 sm:p-6 rounded-xl border border-slate-200/60 space-y-3 text-sm break-words" id="loan-details-box">
+                    <!-- Injetado dinamicamente via JS -->
+                </div>
+                <div class="flex gap-3">
+                    <button class="flex-1 bg-indigo-600 text-white font-medium py-2.5 rounded-xl hover:bg-indigo-700 transition text-center text-sm shadow-sm" onclick="switchTab('biblioteca')">Voltar para Biblioteca</button>
+                </div>
+            </section>
 
 
-        <!-- ==================== TELA DE ENQUETES ==================== -->
-        <section class="tab-content max-w-2xl mx-auto space-y-8" id="tab-enquetes">
-            <div class="border-b pb-4 border-slate-200">
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Voz do Estudante</h1>
-                <p class="text-slate-500">Participe das decisões da nossa escola votando nas enquetes ativas.</p>
-            </div>
-            <div class="space-y-6" id="polls-container">
-                <!-- Injetado dinamicamente via JS -->
-            </div>
-        </section>
+            <!-- ==================== TELA DE ENQUETES ==================== -->
+            <section class="tab-content max-w-2xl mx-auto space-y-8" id="tab-enquetes">
+                <div class="border-b pb-4 border-slate-200">
+                    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Voz do Estudante</h1>
+                    <p class="text-slate-500">Participe das decisões da nossa escola votando nas enquetes ativas.</p>
+                </div>
+                <div class="space-y-6" id="polls-container">
+                    <!-- Injetado dinamicamente via JS -->
+                </div>
+            </section>
 
 
-        <!-- ==================== TELA DE INSTITUIÇÃO ==================== -->
-        <section class="tab-content space-y-12" id="tab-instituicao">
-            <div class="border-b pb-4 border-slate-200">
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Gestão &amp; Corpo Acadêmico</h1>
-                <p class="text-slate-500">Conheça a equipe por trás da administração, do ensino e do desenvolvimento da nossa plataforma.</p>
-            </div>
+            <!-- ==================== TELA DE INSTITUIÇÃO ==================== -->
+            <section class="tab-content space-y-12" id="tab-instituicao">
+                <div class="border-b pb-4 border-slate-200">
+                    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Gestão &amp; Corpo Acadêmico</h1>
+                    <p class="text-slate-500">Conheça a equipe por trás da administração, do ensino e do desenvolvimento da nossa plataforma.</p>
+                </div>
 
-            <!-- 1. EQUIPE DIRETIVA E ADMINISTRATIVA -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-bold text-indigo-700 flex items-center gap-2">
-                    <i class="w-5 h-5" data-lucide="shield-check"></i> Gestão e Administração
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center space-y-3">
-                        <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center font-bold text-2xl">O</div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-900">Osni Novaes Cardoso</h3>
-                            <p class="text-indigo-600 text-sm font-medium">Diretor Geral</p>
+
+                <!-- 1. EQUIPE DIRETIVA E ADMINISTRATIVA -->
+                <div class="space-y-4">
+                    <h2 class="text-xl font-bold text-indigo-700 flex items-center gap-2">
+                        <i class="w-5 h-5" data-lucide="shield-check"></i> Gestão e Administração
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center space-y-3">
+                            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center font-bold text-2xl">O</div>
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-900">Osni Novaes Cardoso</h3>
+                                <p class="text-indigo-600 text-sm font-medium">Diretor Geral</p>
+                            </div>
+                            <p class="text-xs text-slate-500 leading-relaxed">Gerencia toda a escola. Garante que a escola tenha verba, infraestrutura e funcionários, além de assinar documentos oficiais e responder legalmente pela instituição perante a Diretoria de Ensino.</p>
                         </div>
-                        <p class="text-xs text-slate-500 leading-relaxed">Gerencia toda a escola. Garante que a escola tenha verba, infraestrutura e funcionários, além de assinar documentos oficiais e responder legalmente pela instituição perante a Diretoria de Ensino.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center space-y-3">
-                        <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center font-bold text-2xl">J</div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-900">Josemar Luiz de Souza</h3>
-                            <p class="text-indigo-600 text-sm font-medium">Coordenador Pedagógico</p>
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center space-y-3">
+                            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center font-bold text-2xl">J</div>
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-900">Josemar Luiz de Souza</h3>
+                                <p class="text-indigo-600 text-sm font-medium">Coordenador Pedagógico</p>
+                            </div>
+                            <p class="text-xs text-slate-500 leading-relaxed">Gerencia a parte macro da escola. Cuida do calendário escolar, das metas de notas dos alunos e dá o direcionamento pedagógico para todos os professores.</p>
                         </div>
-                        <p class="text-xs text-slate-500 leading-relaxed">Gerencia a parte macro da escola. Cuida do calendário escolar, das metas de notas dos alunos e dá o direcionamento pedagógico para todos os professores.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center space-y-3">
-                        <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center font-bold text-2xl">I</div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-900">Irene Clarindo da Silva</h3>
-                            <p class="text-indigo-600 text-sm font-medium">Coordenadora e Professora de Ciências Humanas e Sociais Aplicadas</p>
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center space-y-3">
+                            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center font-bold text-2xl">I</div>
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-900">Irene Clarindo da Silva</h3>
+                                <p class="text-indigo-600 text-sm font-medium">Coordenadora e Professora de Ciências Humanas e Sociais Aplicadas</p>
+                            </div>
+                            <p class="text-xs text-slate-500 leading-relaxed">Supervisiona as mostras culturais, debates políticos escolares e projetos da atualidade.</p>
                         </div>
-                        <p class="text-xs text-slate-500 leading-relaxed">Supervisiona as mostras culturais, debates políticos escolares e projetos da atualidade.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center space-y-3">
-                        <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center font-bold text-2xl">S</div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-900">Sonia Maria Vicentini</h3>
-                            <p class="text-indigo-600 text-sm font-medium">Coordenadora e Professora de Ciências da Natureza e Matemática(Exatas)</p>
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center space-y-3">
+                            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center font-bold text-2xl">S</div>
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-900">Sonia Maria Vicentini</h3>
+                                <p class="text-indigo-600 text-sm font-medium">Coordenadora e Professora de Ciências da Natureza e Matemática(Exatas)</p>
+                            </div>
+                            <p class="text-xs text-slate-500 leading-relaxed">Supervisiona direto das feiras de ciências, dos laboratórios e das olimpíadas de matemática.</p>
                         </div>
-                        <p class="text-xs text-slate-500 leading-relaxed">Supervisiona direto das feiras de ciências, dos laboratórios e das olimpíadas de matemática.</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center space-y-3">
-                        <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center font-bold text-2xl">W</div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-900">Wellinton Ferreira de Sousa Teixeira
-                            </h3>
-                            <p class="text-indigo-600 text-sm font-medium">Coordenador e Professor Técnico de Desenvolvimento de Sistemas</p>
+                        <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm text-center space-y-3">
+                            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full mx-auto flex items-center justify-center font-bold text-2xl">W</div>
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-900">Wellinton Ferreira de Sousa Teixeira
+                                </h3>
+                                <p class="text-indigo-600 text-sm font-medium">Coordenador e Professor Técnico de Desenvolvimento de Sistemas</p>
+                            </div>
+                            <p class="text-xs text-slate-500 leading-relaxed">Supervisiona as mostras culturais, debates políticos escolares e projetos da atualidade.</p>
                         </div>
-                        <p class="text-xs text-slate-500 leading-relaxed">Supervisiona as mostras culturais, debates políticos escolares e projetos da atualidade.</p>
                     </div>
                 </div>
-            </div>
 
-            <!-- 2. PROFESSORES -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-bold text-emerald-700 flex items-center gap-2">
-                    <i class="w-5 h-5" data-lucide="graduation-cap"></i> Corpo Docente (Professores)
-                </h2>
+
+                <!-- 2. PROFESSORES -->
+                <div class="space-y-4">
+                    <h2 class="text-xl font-bold text-emerald-700 flex items-center gap-2">
+                        <i class="w-5 h-5" data-lucide="graduation-cap"></i> Corpo Docente (Professores)
+                    </h2>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm text-center space-y-2">
-
-
                         <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full mx-auto flex items-center justify-center font-bold text-xl">AB</div>
                         <h4 class="font-bold text-base text-slate-900 line-clamp-1">Adriano Bernabe Azevedo</h4>
                         <p class="text-emerald-600 text-xs font-medium">Professor de História e Filosofia</p>
@@ -324,8 +370,7 @@
                     <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm text-center space-y-2">
                         <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full mx-auto flex items-center justify-center font-bold text-xl">DS</div>
                         <h4 class="font-bold text-base text-slate-900 line-clamp-1">Dimas da Silva</h4>
-                        <p class="text-emerald-600 text-xs font-medium">Professor Técnico de Desenvolvimento de 
-                        Sistemas</p>
+                        <p class="text-emerald-600 text-xs font-medium">Professor Técnico de Desenvolvimento de Sistemas</p>
                     </div>
                     <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm text-center space-y-2">
                         <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full mx-auto flex items-center justify-center font-bold text-xl">IS</div>
@@ -372,6 +417,7 @@
         </section>
 
 
+
         <!-- ==================== TELA DE AJUDA / SUPORTE ==================== -->
         <section class="tab-content space-y-8" id="tab-ajuda">
             <div class="border-b pb-4 border-slate-200">
@@ -389,12 +435,12 @@
                         <p class="text-sm text-slate-600 leading-relaxed">Você tem até 30 dias corridos para devolver o exemplar. O prazo aparece em “Meus Empréstimos”.</p>
                     </div>
                     <div class="bg-white p-5 rounded-xl border border-slate-200/60 shadow-sm">
-                        <h3 class="font-bold text-slate-900 mb-1 text-base">Quem pode escrever artigos no HenriNews?</h3>
+                        <h3 class="font-bold text-slate-900 mb-1 text-base">Quem pode escrever artigos no HenriNews</h3>
                         <p class="text-sm text-slate-600 leading-relaxed">Todos os alunos matriculados podem submeter textos por e-mail para a equipe de moderação.</p>
                     </div>
                 </div>
                 <!-- Formulário -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4 h-fit">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4 h-fit">
                     <div class="space-y-1">
                         <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                             <i class="text-indigo-600" data-lucide="message-square-plus"></i> Enviar uma Pergunta
@@ -415,167 +461,166 @@
                             <textarea class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" id="help-mensagem" required="" rows="4"></textarea>
                         </div>
                         <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2" type="submit">
-                            Enviar Pergunta
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-
-
-        <!-- ==================== PAINEL DO ADMINISTRADOR / GESTOR ==================== -->
-        <section class="tab-content space-y-10" id="tab-admin">
-            <div class="border-b pb-4 border-slate-200">
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Painel Administrativo</h1>
-                <p class="text-slate-500">Módulo central para gestão de notícias, controle de acervo e enquetes escolares.</p>
-            </div>
-            <!-- Grid de Ações Rápidas de Gerenciamento -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Criar & Gerenciar Artigos -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
-                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><i class="text-indigo-600" data-lucide="file-plus-2"></i> Criar Artigo / Notícia</h3>
-                    <form class="space-y-4" onsubmit="handleCreateArticle(event)">
-                        <input id="admin-article-id" type="hidden"/>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Título do Artigo</label>
-                            <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" id="admin-art-title" required="" type="text"/>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">URL da Imagem de Capa</label>
-                            <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" id="admin-art-image" placeholder="https://images.unsplash.com/..." type="url"/>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Conteúdo da Notícia</label>
-                            <textarea class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" id="admin-art-content" required="" rows="4"></textarea>
-                        </div>
-                        <div class="flex gap-2 justify-end">
-                            <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2 rounded-lg text-sm transition" onclick="handleSaveDraft()" type="button">
-                                Salvar Rascunho
-                            </button>
-                            <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition shadow-sm" type="submit">
-                                Publicar Artigo
-                            </button>
-                        </div>
-                    </form>
-                    <div class="border-t pt-4">
-                        <h4 class="font-bold text-sm text-slate-700 mb-2">Artigos Ativos no Sistema</h4>
-                        <div class="divide-y text-sm" id="admin-articles-list">
-                            <!-- Injetado dinamicamente via JS -->
-                        </div>
-                    </div>
-                </div>
-                <!-- Gerenciar Biblioteca (Cadastro + Lista de Empréstimos ativos) -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
-                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><i class="text-emerald-600" data-lucide="book-plus"></i> Gerenciar Biblioteca</h3>
-                    <form class="space-y-4" onsubmit="handleCreateBook(event)">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Título do Livro</label>
-                                <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" id="admin-book-title" required="" type="text"/>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Autor</label>
-                                <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" id="admin-book-author" required="" type="text"/>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Breve Descrição</label>
-                            <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" id="admin-book-desc" required="" type="text">
-                        </div>
-                        <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg text-sm transition shadow-sm" type="submit">
-                            Cadastrar Novo Livro
-                        </button>
-                    </form>
-                    <div class="border-t pt-4">
-                        <h4 class="font-bold text-sm text-slate-700 mb-2 flex items-center gap-1">
-                            <i class="w-4 h-4 text-emerald-600" data-lucide="users"></i> Empréstimos Ativos Realizados
-                        </h4>
-                        <div class="divide-y text-xs max-h-40 overflow-y-auto" id="admin-loans-list">
-                            <!-- Injetado dinamicamente via JS -->
-                        </div>
-                    </div>
-                </div>
-                <!-- Gerenciar Novas Enquetes -->
-                <div class="bg-white p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4 lg:col-span-2">
-                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><i class="text-amber-600" data-lucide="vote"></i> Criar Nova Enquete Estudantil</h3>
-                    <form class="space-y-4 max-w-xl" onsubmit="handleCreatePoll(event)">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Pergunta da Enquete</label>
-                            <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" id="admin-poll-question" placeholder="Ex: Qual deve ser o tema da próxima feira cultural?" required="" type="text"/>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Opção A</label>
-                                <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" id="admin-poll-opA" required="" type="text"/>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Opção B</label>
-                                <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" id="admin-poll-opB" required="" type="text"/>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Opção C</label>
-                                <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" id="admin-poll-opC" required="" type="text"/>
-                            </div>
-                            <!-- Nova Opção D -->
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Opção D</label>
-                                <input class="w-full px-4 py-2 rounded-xl border" id="admin-poll-opD" placeholder="" type="text"/>
-                            </div>
-                            <!-- Nova Opção E -->
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Opção E</label>
-                                <input class="w-full px-4 py-2 rounded-xl border" id="admin-poll-opE" placeholder="" type="text"/>
-                            </div>
-                        </div>
-                        <button class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2 rounded-lg text-sm transition shadow-sm" type="submit">
-                            Ativar Enquete para Alunos
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
-                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><i class="text-violet-600" 
-                data-lucide="messages-square"></i> Perguntas de Suporte</h3>
-                <div class="divide-y text-sm" id="admin-help-list"></div>
-            </div>
-        </section>
-    </main>
-
-    <!-- [RN07] RODAPÉ DO SISTEMA -->
-    <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div class="space-y-2">
-                <span class="text-white font-bold text-base tracking-tight">HenriNews</span>
-                <p class="leading-relaxed">O principal ecossistema digital e jornalístico de integração para o corpo acadêmico da instituição.</p>
-            </div>
-            <div>
-                <h4 class="text-white font-bold text-sm mb-3">Links de Navegação</h4>
-                <ul class="space-y-2">
-                    <li><button class="hover:text-white transition" onclick="switchTab('feed')">Feed de Notícias</button></li>
-                    <li><button class="hover:text-white transition" onclick="switchTab('biblioteca')">Biblioteca Digital</button></li>
-                    <li><button class="hover:text-white transition" onclick="switchTab('enquetes')">Enquetes Estudantis</button></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white font-bold text-sm mb-3">Institucional</h4>
-                <ul class="space-y-2">
-
-                    <li><button class="hover:text-white transition" onclick="switchTab('instituicao')">Gestão e Coordenação</button></li>
-                    <li><button class="hover:text-white transition" onclick="switchTab('ajuda')">Ajuda &amp; Suporte Técnico</button></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="text-white font-bold text-sm mb-3">Segurança Integrada</h4>
-                <p class="leading-relaxed">Autenticação feita pelo Supabase Auth e acesso aos dados protegido por políticas de Row Level Security (RLS).</p>
+                        Enviar Pergunta
+                    </button>
+                </form>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 border-t border-slate-800 text-center text-slate-500">
+    </section>
+
+
+
+    <!-- ==================== PAINEL DO ADMINISTRADOR / GESTOR ==================== -->
+    <section class="tab-content space-y-10" id="tab-admin">
+        <div class="border-b pb-4 border-slate-200">
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Painel Administrativo</h1>
+            <p class="text-slate-500">Módulo central para gestão de notícias, controle de acervo e enquetes escolares.</p>
+        </div>
+        <!-- Grid de Ações Rápidas de Gerenciamento -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Criar & Gerenciar Artigos -->
+            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
+                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><i class="text-indigo-600" data-lucide="file-plus-2"></i> Criar Artigo / Notícia</h3>
+                <form class="space-y-4" onsubmit="handleCreateArticle(event)">
+                    <input id="admin-article-id" type="hidden"/>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Título do Artigo</label>
+                        <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" id="admin-art-title" required="" type="text"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">URL da Imagem de Capa</label>
+                        <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" id="admin-art-image" placeholder="https://images.unsplash.com/..." type="url"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Conteúdo da Notícia</label>
+                        <textarea class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" id="admin-art-content" required="" rows="4"></textarea>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2 sm:justify-end">
+                        <button class="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2 rounded-lg text-sm transition" onclick="handleSaveDraft()" type="button">
+                            Salvar Rascunho
+                        </button>
+                        <button class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition shadow-sm" type="submit">
+                            Publicar Artigo
+                        </button>
+                    </div>
+                </form>
+                <div class="border-t pt-4">
+                    <h4 class="font-bold text-sm text-slate-700 mb-2">Artigos Ativos no Sistema</h4>
+                    <div class="divide-y text-sm" id="admin-articles-list">
+                        <!-- Injetado dinamicamente via JS -->
+                    </div>
+                </div>
+            </div>
+            <!-- Gerenciar Biblioteca (Cadastro + Lista de Empréstimos ativos) -->
+            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
+                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><i class="text-emerald-600" data-lucide="book-plus"></i> Gerenciar Biblioteca</h3>
+                <form class="space-y-4" onsubmit="handleCreateBook(event)">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Título do Livro</label>
+                            <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" id="admin-book-title" required="" type="text"/>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Autor</label>
+                            <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" id="admin-book-author" required="" type="text"/>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Breve Descrição</label>
+                        <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" id="admin-book-desc" required="" type="text"/>
+                    </div>
+                    <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg text-sm transition shadow-sm" type="submit">
+                        Cadastrar Novo Livro
+                    </button>
+                </form>
+                <div class="border-t pt-4">
+                    <h4 class="font-bold text-sm text-slate-700 mb-2 flex items-center gap-1">
+                        <i class="w-4 h-4 text-emerald-600" data-lucide="users"></i> Empréstimos Ativos Realizados
+                    </h4>
+                    <div class="divide-y text-xs max-h-40 overflow-y-auto" id="admin-loans-list">
+                        <!-- Injetado dinamicamente via JS -->
+                    </div>
+                </div>
+            </div>
+            <!-- Gerenciar Novas Enquetes -->
+            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4 lg:col-span-2">
+                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><i class="text-amber-600" data-lucide="vote"></i> Criar Nova Enquete Estudantil</h3>
+                <form class="space-y-4 max-w-xl" onsubmit="handleCreatePoll(event)">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Pergunta da Enquete</label>
+                        <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" id="admin-poll-question" placeholder="Ex: Qual deve ser o tema da próxima feira cultural?" required="" type="text"/>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Opção A</label>
+                            <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" id="admin-poll-opA" required="" type="text"/>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Opção B</label>
+                            <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" id="admin-poll-opB" required="" type="text"/>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Opção C</label>
+                            <input class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" id="admin-poll-opC" required="" type="text"/>
+                        </div>
+                        <!-- Nova Opção D -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Opção D</label>
+                            <input class="w-full px-4 py-2 rounded-xl border" id="admin-poll-opD" placeholder="" type="text"/>
+                        </div>
+                        <!-- Nova Opção E -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Opção E</label>
+                            <input class="w-full px-4 py-2 rounded-xl border" id="admin-poll-opE" placeholder="" type="text"/>
+                        </div>
+                    </div>
+                    <button class="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2.5 rounded-lg text-sm transition shadow-sm" type="submit">
+                        Ativar Enquete para Alunos
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/70 shadow-sm space-y-4">
+            <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2"><i class="text-violet-600"
+            data-lucide="messages-square"></i> Perguntas de Suporte</h3>
+            <div class="divide-y text-sm" id="admin-help-list"></div>
+        </div>
+    </section>
+</main>
+
+
+<!-- [RN07] RODAPÉ DO SISTEMA -->
+<footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 mt-10 sm:mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="space-y-2">
+            <span class="text-white font-bold text-base tracking-tight">HenriNews</span>
+            <p class="leading-relaxed">O principal ecossistema digital e jornalístico de integração para o corpo acadêmico da instituição.</p>
+        </div>
+        <div>
+            <h4 class="text-white font-bold text-sm mb-3">Links de Navegação</h4>
+            <ul class="space-y-2">
+                <li><button class="hover:text-white transition" onclick="switchTab('feed')">Feed de Notícias</button></li>
+                <li><button class="hover:text-white transition" onclick="switchTab('biblioteca')">Biblioteca Digital</button></li>
+                <li><button class="hover:text-white transition" onclick="switchTab('enquetes')">Enquetes Estudantis</button></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="text-white font-bold text-sm mb-3">Institucional</h4>
+            <ul class="space-y-2">
+                <li><button class="hover:text-white transition" onclick="switchTab('instituicao')">Gestão e Coordenação</button></li>
+                <li><button class="hover:text-white transition" onclick="switchTab('ajuda')">Ajuda &amp; Suporte Técnico</button></li>
+            </ul>
+        </div>
+        <div>
+            <h4 class="text-white font-bold text-sm mb-3">Segurança Integrada</h4>
+            <p class="leading-relaxed">Autenticação feita pelo Supabase Auth e acesso aos dados protegido por políticas de Row Level Security (RLS).</p>
+        </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 border-t border-slate-800 text-center text-slate-500">
             © 2026 HenriNews Portal. Todos os direitos reservados.
-        </div>
-    </footer>
-
-    LÓGICA JAVASCRIPT CONECTADA AO SUPABASE 
-    <script src="script.js"></script>
+    </div>
+</footer>
+<script src="script.js"></script>
+<script src="mobile.js"></script>
 </body>
 </html>

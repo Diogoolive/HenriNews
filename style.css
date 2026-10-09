@@ -1,8 +1,125 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
 
-html { scroll-behavior: smooth; }
-button:disabled { opacity: .6; cursor: not-allowed; }
-.status-pill { display:inline-flex; align-items:center; padding:.2rem .55rem; border-radius:9999px; font-size:.7rem; font-weight:700; }
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+img,
+video,
+iframe {
+    max-width: 100%;
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: .2rem .55rem;
+    border-radius: 9999px;
+    font-size: .7rem;
+    font-weight: 700;
+}
+
+.mobile-nav-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem 1rem;
+    border-radius: .5rem;
+    text-align: left;
+    transition: background-color .2s ease;
+}
+
+.mobile-nav-item:hover {
+    background-color: rgb(67 56 202);
+}
+
+/* Evita o zoom automático do iPhone ao tocar em formulários. */
+input,
+select,
+textarea {
+    font-size: 16px;
+}
+
+/* Quebra textos grandes, URLs e códigos sem estourar a tela. */
+p,
+span,
+a,
+button,
+label,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 767px) {
+    main {
+        padding-top: 1rem !important;
+        padding-bottom: 2rem !important;
+    }
+
+    h1 {
+        font-size: 1.65rem !important;
+        line-height: 2rem !important;
+    }
+
+    h2 {
+        line-height: 1.8rem !important;
+    }
+
+    .tab-content {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* Cards e formulários ficam mais confortáveis em telas pequenas. */
+    input,
+    select,
+    textarea,
+    button {
+        min-width: 0;
+    }
+
+    /* Evita que imagens de notícias ocupem altura exagerada. */
+    #article-detail-content img {
+        height: auto !important;
+        max-height: 18rem;
+        object-fit: cover;
+    }
+
+    /* Listagens administrativas podem conter textos muito compridos. */
+    #admin-articles-list > div,
+    #admin-loans-list > div,
+    #admin-help-list > div,
+    #my-loans-container > div {
+        min-width: 0;
+    }
+}
