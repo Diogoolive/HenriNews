@@ -123,3 +123,12 @@ h6 {
         min-width: 0;
     }
 }
+
+
+/* Menu mobile sem JavaScript extra: usa <details>/<summary>. */
+summary::-webkit-details-marker { display: none; }
+summary { list-style: none; }
+
+/* Garante que elementos interativos permaneçam clicáveis. */
+button, a, input, select, textarea, summary { pointer-events: auto; }
+nav { isolation: isolate; }
