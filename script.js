@@ -36,7 +36,7 @@ const db = CONFIGURED
 
 
 // ============================================================
-// 2. ESTADO GERAL DO SISTEMA
+// 2. ESTADO GERAL
 // ============================================================
 
 let currentUser = null;
@@ -117,7 +117,9 @@ function safeImage(url) {
             parsed.protocol === 'http:' ||
             parsed.protocol === 'https:'
         ) {
+
             return parsed.href;
+
         }
 
         return fallback;
@@ -239,7 +241,191 @@ function showError(
 
 
 // ============================================================
-// 4. INTERFACE DE AUTENTICAÇÃO
+// 4. TEMA CLARO / ESCURO
+// ============================================================
+
+const THEME_STORAGE_KEY =
+    'henrinews_theme';
+
+
+function getPreferredTheme() {
+
+    const savedTheme =
+        localStorage.getItem(
+            THEME_STORAGE_KEY
+        );
+
+
+    if (
+        savedTheme === 'dark' ||
+        savedTheme === 'light'
+    ) {
+
+        return savedTheme;
+
+    }
+
+
+    const systemDark =
+        window.matchMedia &&
+        window
+            .matchMedia(
+                '(prefers-color-scheme: dark)'
+            )
+            .matches;
+
+
+    return systemDark
+        ? 'dark'
+        : 'light';
+
+}
+
+
+function applyTheme(theme) {
+
+    const finalTheme =
+        theme === 'dark'
+            ? 'dark'
+            : 'light';
+
+
+    document
+        .documentElement
+        .setAttribute(
+            'data-theme',
+            finalTheme
+        );
+
+
+    localStorage.setItem(
+        THEME_STORAGE_KEY,
+        finalTheme
+    );
+
+
+    updateThemeButton();
+
+}
+
+
+function toggleTheme() {
+
+    const currentTheme =
+        document
+            .documentElement
+            .getAttribute(
+                'data-theme'
+            ) ||
+        'light';
+
+
+    const newTheme =
+        currentTheme === 'dark'
+            ? 'light'
+            : 'dark';
+
+
+    applyTheme(
+        newTheme
+    );
+
+}
+
+
+function updateThemeButton() {
+
+    const button =
+        document.getElementById(
+            'theme-toggle-btn'
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    const currentTheme =
+        document
+            .documentElement
+            .getAttribute(
+                'data-theme'
+            ) ||
+        'light';
+
+
+    if (
+        currentTheme === 'dark'
+    ) {
+
+        button.innerHTML = `
+
+            <i
+                data-lucide="sun"
+                class="w-4 h-4"
+            ></i>
+
+            <span class="hidden lg:inline">
+                Modo claro
+            </span>
+        `;
+
+
+        button.title =
+            'Usar modo claro';
+
+        button.setAttribute(
+            'aria-label',
+            'Ativar modo claro'
+        );
+
+    } else {
+
+        button.innerHTML = `
+
+            <i
+                data-lucide="moon"
+                class="w-4 h-4"
+            ></i>
+
+            <span class="hidden lg:inline">
+                Modo escuro
+            </span>
+        `;
+
+
+        button.title =
+            'Usar modo escuro';
+
+        button.setAttribute(
+            'aria-label',
+            'Ativar modo escuro'
+        );
+
+    }
+
+
+    renderIcons();
+
+}
+
+
+function initializeTheme() {
+
+    const theme =
+        getPreferredTheme();
+
+
+    applyTheme(
+        theme
+    );
+
+}
+
+
+// ============================================================
+// 5. INTERFACE DE AUTENTICAÇÃO
 // ============================================================
 
 function updateAuthUI() {
@@ -351,7 +537,7 @@ function updateAuthUI() {
 
 
 // ============================================================
-// 5. NAVEGAÇÃO ENTRE TELAS
+// 6. NAVEGAÇÃO
 // ============================================================
 
 function switchTab(tabId) {
@@ -401,7 +587,6 @@ function switchTab(tabId) {
     }
 
 
-    // FEED
     if (
         tabId === 'feed'
     ) {
@@ -411,7 +596,6 @@ function switchTab(tabId) {
     }
 
 
-    // BIBLIOTECA
     if (
         tabId === 'biblioteca'
     ) {
@@ -476,7 +660,6 @@ function switchTab(tabId) {
     }
 
 
-    // ENQUETES
     if (
         tabId === 'enquetes'
     ) {
@@ -486,7 +669,6 @@ function switchTab(tabId) {
     }
 
 
-    // PAINEL GESTOR
     if (
         tabId === 'admin'
     ) {
@@ -502,7 +684,6 @@ function switchTab(tabId) {
     }
 
 
-    // AJUDA
     if (
         tabId === 'ajuda'
     ) {
@@ -524,7 +705,7 @@ function switchTab(tabId) {
 
 
 // ============================================================
-// 6. PERFIL
+// 7. PERFIL
 // ============================================================
 
 async function loadProfile(
@@ -644,7 +825,7 @@ async function syncCurrentUser(
 
 
 // ============================================================
-// 7. CADASTRO
+// 8. CADASTRO
 // ============================================================
 
 async function handleRegister(e) {
@@ -778,7 +959,7 @@ async function handleRegister(e) {
 
 
 // ============================================================
-// 8. LOGIN
+// 9. LOGIN
 // ============================================================
 
 async function handleLogin(e) {
@@ -847,7 +1028,7 @@ async function handleLogin(e) {
 
 
 // ============================================================
-// 9. LOGOUT
+// 10. LOGOUT
 // ============================================================
 
 async function handleLogout() {
@@ -900,6 +1081,8 @@ async function handleLogout() {
 
     renderMyLoans();
 
+    renderPolls();
+
     renderMyHelpQuestions();
 
 
@@ -911,7 +1094,7 @@ async function handleLogout() {
 
 
 // ============================================================
-// 10. RECUPERAÇÃO DE SENHA
+// 11. RECUPERAÇÃO DE SENHA
 // ============================================================
 
 async function handleRecoverPassword(e) {
@@ -986,7 +1169,7 @@ async function handleRecoverPassword(e) {
 
 
 // ============================================================
-// 11. NOVA SENHA
+// 12. NOVA SENHA
 // ============================================================
 
 async function handleUpdatePassword(e) {
@@ -1102,7 +1285,7 @@ async function handleUpdatePassword(e) {
 
 
 // ============================================================
-// 12. CARREGAR ARTIGOS
+// 13. CARREGAR ARTIGOS
 // ============================================================
 
 async function loadArticles() {
@@ -1154,7 +1337,7 @@ async function loadArticles() {
 
 
 // ============================================================
-// 13. ARTIGOS SALVOS
+// 14. ARTIGOS SALVOS
 // ============================================================
 
 async function loadSavedArticles() {
@@ -1213,7 +1396,7 @@ async function loadSavedArticles() {
 
 
 // ============================================================
-// 14. MOSTRAR ARTIGOS
+// 15. RENDERIZAR ARTIGOS
 // ============================================================
 
 function renderArticles() {
@@ -1459,7 +1642,7 @@ function filterArticles(type) {
 
 
 // ============================================================
-// 15. DETALHE DO ARTIGO
+// 16. DETALHE DO ARTIGO
 // ============================================================
 
 function viewArticleDetail(id) {
@@ -1511,6 +1694,7 @@ function viewArticleDetail(id) {
                     object-cover
                     rounded-2xl
                 "
+                alt="Capa da notícia"
             >
 
 
@@ -1536,7 +1720,7 @@ function viewArticleDetail(id) {
 
 
 // ============================================================
-// 16. SALVAR ARTIGO
+// 17. SALVAR ARTIGO
 // ============================================================
 
 async function toggleSaveArticle(id) {
@@ -1633,7 +1817,7 @@ async function toggleSaveArticle(id) {
 
 
 // ============================================================
-// 17. GÊNEROS
+// 18. GÊNEROS
 // ============================================================
 
 async function loadGenres() {
@@ -1681,7 +1865,7 @@ async function loadGenres() {
 
 
 // ============================================================
-// 18. SUBGÊNEROS
+// 19. SUBGÊNEROS
 // ============================================================
 
 async function loadSubgenres() {
@@ -1729,7 +1913,7 @@ async function loadSubgenres() {
 
 
 // ============================================================
-// 19. LIVROS
+// 20. LIVROS
 // ============================================================
 
 async function loadBooks() {
@@ -1790,7 +1974,7 @@ async function loadBooks() {
 
 
 // ============================================================
-// 20. CARD DO LIVRO
+// 21. CARD DO LIVRO
 // ============================================================
 
 function createBookCard(
@@ -1856,7 +2040,6 @@ function createBookCard(
                             px-2
                             py-1
                             rounded
-
                             ${
                                 available
                                     ? 'bg-emerald-50 text-emerald-700'
@@ -1982,7 +2165,7 @@ function createBookCard(
 
 
 // ============================================================
-// 21. BIBLIOTECA
+// 22. BIBLIOTECA
 // ============================================================
 
 function renderLibrary() {
@@ -1995,7 +2178,7 @@ function renderLibrary() {
 
 
 // ============================================================
-// 22. NOVOS LIVROS
+// 23. NOVOS LIVROS
 // ============================================================
 
 function renderNewBooks() {
@@ -2066,7 +2249,7 @@ function renderNewBooks() {
 
 
 // ============================================================
-// 23. LISTAR GÊNEROS
+// 24. LISTAR GÊNEROS
 // ============================================================
 
 function renderGenres() {
@@ -2193,7 +2376,7 @@ function renderGenres() {
 
 
 // ============================================================
-// 24. ABRIR GÊNERO
+// 25. ABRIR GÊNERO
 // ============================================================
 
 function openGenre(
@@ -2276,7 +2459,7 @@ function openGenre(
 
 
 // ============================================================
-// 25. SUBGÊNEROS
+// 26. SUBGÊNEROS
 // ============================================================
 
 function renderSubgenresForGenre(
@@ -2385,7 +2568,7 @@ function renderSubgenresForGenre(
 
 
 // ============================================================
-// 26. LIVROS DO GÊNERO
+// 27. LIVROS DO GÊNERO
 // ============================================================
 
 function renderBooksForGenre(
@@ -2445,7 +2628,7 @@ function renderBooksForGenre(
 
 
 // ============================================================
-// 27. ABRIR SUBGÊNERO
+// 28. ABRIR SUBGÊNERO
 // ============================================================
 
 function openSubgenre(
@@ -2548,7 +2731,7 @@ function openSubgenre(
 
 
 // ============================================================
-// 28. LIVROS DO SUBGÊNERO
+// 29. LIVROS DO SUBGÊNERO
 // ============================================================
 
 function renderBooksForSubgenre(
@@ -2601,7 +2784,7 @@ function renderBooksForSubgenre(
 
 
 // ============================================================
-// 29. VOLTAR
+// 30. VOLTAR NA BIBLIOTECA
 // ============================================================
 
 function backToLibraryHome() {
@@ -2661,7 +2844,7 @@ function backToCurrentGenre() {
 
 
 // ============================================================
-// 30. PESQUISA DA BIBLIOTECA
+// 31. PESQUISA DA BIBLIOTECA
 // ============================================================
 
 function handleLibrarySearch() {
@@ -2920,7 +3103,7 @@ function clearLibrarySearch() {
 
 
 // ============================================================
-// 31. SELECT DE GÊNEROS DO ADMIN
+// 32. GÊNEROS DO ADMIN
 // ============================================================
 
 function renderAdminGenreSelect() {
@@ -3068,7 +3251,7 @@ function updateAdminSubgenres() {
 
 
 // ============================================================
-// 32. EMPRÉSTIMOS DO USUÁRIO
+// 33. EMPRÉSTIMOS DO USUÁRIO
 // ============================================================
 
 async function loadMyLoans() {
@@ -3286,7 +3469,7 @@ function renderMyLoans() {
 
 
 // ============================================================
-// 33. SOLICITAR LIVRO
+// 34. SOLICITAR LIVRO
 // ============================================================
 
 async function requestLoan(
@@ -3399,7 +3582,7 @@ async function requestLoan(
 
 
 // ============================================================
-// 34. VOTOS DO USUÁRIO
+// 35. VOTOS DO USUÁRIO
 // ============================================================
 
 async function loadUserVotes() {
@@ -3459,7 +3642,7 @@ async function loadUserVotes() {
 
 
 // ============================================================
-// 35. ENQUETES
+// 36. ENQUETES
 // ============================================================
 
 async function loadPolls() {
@@ -3607,7 +3790,7 @@ async function loadPolls() {
 
 
 // ============================================================
-// 36. MOSTRAR ENQUETES
+// 37. MOSTRAR ENQUETES
 // ============================================================
 
 function renderPolls() {
@@ -3819,7 +4002,7 @@ function renderPolls() {
 
 
 // ============================================================
-// 37. VOTAR
+// 38. VOTAR
 // ============================================================
 
 async function handleVote(
@@ -3880,7 +4063,7 @@ async function handleVote(
 
 
 // ============================================================
-// 38. EXCLUIR ENQUETE
+// 39. EXCLUIR ENQUETE
 // ============================================================
 
 async function deletePoll(
@@ -3939,7 +4122,7 @@ async function deletePoll(
 
 
 // ============================================================
-// 39. PAINEL ADMINISTRATIVO
+// 40. PAINEL ADMINISTRATIVO
 // ============================================================
 
 async function renderAdminDashboard() {
@@ -4383,7 +4566,6 @@ async function renderAdminDashboard() {
                                                 px-2
                                                 py-1
                                                 rounded-full
-
                                                 ${
                                                     item.status === 'resolved'
                                                         ? 'bg-emerald-100 text-emerald-700'
@@ -4630,7 +4812,7 @@ async function renderAdminDashboard() {
 
 
 // ============================================================
-// 40. NAVEGAÇÃO INTERNA DO ADMIN
+// 41. NAVEGAÇÃO DO PAINEL ADMIN
 // ============================================================
 
 async function openAdminSection(
@@ -4731,7 +4913,7 @@ async function openAdminSection(
 
 
 // ============================================================
-// 41. SALVAR ARTIGO / RASCUNHO
+// 42. SALVAR ARTIGO
 // ============================================================
 
 async function saveArticle(
@@ -4805,6 +4987,7 @@ async function saveArticle(
     const payload = {
 
         title,
+
         content,
 
         image_url:
@@ -4902,7 +5085,7 @@ async function handleSaveDraft() {
 
 
 // ============================================================
-// 42. EDITAR ARTIGO
+// 43. EDITAR ARTIGO
 // ============================================================
 
 function loadArticleToEdit(id) {
@@ -4973,7 +5156,7 @@ function loadArticleToEdit(id) {
 
 
 // ============================================================
-// 43. EXCLUIR ARTIGO
+// 44. EXCLUIR ARTIGO
 // ============================================================
 
 async function deleteArticle(id) {
@@ -5065,7 +5248,7 @@ function clearArticleForm() {
 
 
 // ============================================================
-// 44. CADASTRAR LIVRO
+// 45. CADASTRAR LIVRO
 // ============================================================
 
 async function handleCreateBook(e) {
@@ -5245,7 +5428,7 @@ async function handleCreateBook(e) {
 
 
 // ============================================================
-// 45. DEVOLVER LIVRO
+// 46. DEVOLVER LIVRO
 // ============================================================
 
 async function markLoanReturned(
@@ -5303,7 +5486,7 @@ async function markLoanReturned(
 
 
 // ============================================================
-// 46. CRIAR ENQUETE
+// 47. CRIAR ENQUETE
 // ============================================================
 
 async function handleCreatePoll(e) {
@@ -5367,9 +5550,7 @@ async function handleCreatePoll(e) {
             );
 
 
-    if (
-        !question
-    ) {
+    if (!question) {
 
         alert(
             'Informe a pergunta da enquete.'
@@ -5488,7 +5669,7 @@ async function handleCreatePoll(e) {
 
 
 // ============================================================
-// 47. CARREGAR PERGUNTAS DO USUÁRIO
+// 48. PERGUNTAS DO USUÁRIO
 // ============================================================
 
 async function loadMyHelpQuestions() {
@@ -5558,7 +5739,7 @@ async function loadMyHelpQuestions() {
 
 
 // ============================================================
-// 48. MOSTRAR PERGUNTAS DO USUÁRIO
+// 49. MOSTRAR PERGUNTAS E RESPOSTAS
 // ============================================================
 
 function renderMyHelpQuestions() {
@@ -5672,7 +5853,6 @@ function renderMyHelpQuestions() {
                                     px-2
                                     py-1
                                     rounded-full
-
                                     ${
                                         item.status === 'resolved'
                                             ? 'bg-emerald-100 text-emerald-700'
@@ -5794,7 +5974,7 @@ function renderMyHelpQuestions() {
 
 
 // ============================================================
-// 49. FORMULÁRIO DE AJUDA
+// 50. FORMULÁRIO DE AJUDA
 // ============================================================
 
 function setupHelpForm() {
@@ -5845,7 +6025,7 @@ function setupHelpForm() {
 
 
 // ============================================================
-// 50. ENVIAR PERGUNTA
+// 51. ENVIAR PERGUNTA
 // ============================================================
 
 async function handleSendHelpQuestion(e) {
@@ -5967,7 +6147,7 @@ async function handleSendHelpQuestion(e) {
 
 
 // ============================================================
-// 51. GESTOR RESPONDER PERGUNTA
+// 52. GESTOR RESPONDER PERGUNTA
 // ============================================================
 
 async function respondHelpQuestion(
@@ -6060,7 +6240,7 @@ async function respondHelpQuestion(
 
 
 // ============================================================
-// 52. MARCAR PERGUNTA COMO RESOLVIDA
+// 53. MARCAR PERGUNTA COMO RESOLVIDA
 // ============================================================
 
 async function markHelpResolved(
@@ -6111,10 +6291,14 @@ async function markHelpResolved(
 
 
 // ============================================================
-// 53. INICIALIZAÇÃO DO SISTEMA
+// 54. INICIALIZAÇÃO
 // ============================================================
 
 async function initializeApp() {
+
+    // Carrega o tema antes do restante
+    initializeTheme();
+
 
     updateAuthUI();
 
@@ -6162,7 +6346,6 @@ async function initializeApp() {
     }
 
 
-    // Recuperação de senha
     const urlParams =
         new URLSearchParams(
             window.location.search
@@ -6175,7 +6358,7 @@ async function initializeApp() {
         ) === '1';
 
 
-    // Listener precisa vir antes de getSession
+    // Listener antes de getSession
     db
         .auth
         .onAuthStateChange(
@@ -6260,7 +6443,6 @@ async function initializeApp() {
     );
 
 
-    // Carregar conteúdo principal
     await Promise.all([
         loadArticles(),
         loadGenres(),
@@ -6296,6 +6478,8 @@ async function initializeApp() {
 
     updateAuthUI();
 
+    updateThemeButton();
+
     renderIcons();
 
 
@@ -6314,7 +6498,7 @@ async function initializeApp() {
 
 
 // ============================================================
-// 54. INICIAR HENRINEWS
+// 55. INICIAR O HENRINEWS
 // ============================================================
 
 document.addEventListener(

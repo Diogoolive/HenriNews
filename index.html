@@ -436,6 +436,37 @@
 
                     <button
                         type="button"
+                        id="theme-toggle-btn"
+                        onclick="toggleTheme()"
+                        class="
+                            bg-indigo-700
+                            hover:bg-indigo-800
+                            text-white
+                            px-3
+                            py-2
+                            rounded-md
+                            text-sm
+                            font-medium
+                            transition
+                            flex
+                            items-center
+                            gap-2
+                        "
+                        title="Alterar tema"
+                    >
+                        <i
+                            data-lucide="moon"
+                            class="w-4 h-4"
+                        ></i>
+
+                        <span class="hidden lg:inline">
+                            Modo escuro
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
                         id="nav-admin-btn"
                         onclick="switchTab('admin')"
                         class="
