@@ -407,36 +407,144 @@ async function handleLogout() {
 
 async function handleRecoverPassword(e) {
     e.preventDefault();
+
     if (!ensureConfigured()) return;
 
-    const email = document.getElementById('recover-email').value.trim().toLowerCase();
-    const options = {};
-    const callback = redirectUrl();
-    if (callback) options.redirectTo = callback;
+    const email = document
+        .getElementById('recover-email')
+        .value
+        .trim()
+        .toLowerCase();
 
-    const { error } = await db.auth.resetPasswordForEmail(email, options);
-    if (error) return showError('Não foi possível enviar a recuperação de senha', error);
+    if (!email) {
+        alert('Digite seu e-mail.');
+        return;
+    }
 
-    alert('Se o e-mail estiver cadastrado, você receberá as instruções de recuperação.');
+    // Quando clicar no link do e-mail, o usuário volta
+    // para o HenriNews com ?recovery=1 na URL
+    const recoveryUrl =
+        `${window.location.origin}${window.location.pathname}?recovery=1`;
+
+    const { error } =
+        await db.auth.resetPasswordForEmail(
+            email,
+            {
+                redirectTo: recoveryUrl
+            }
+        );
+
+    if (error) {
+        return showError(
+            'Não foi possível enviar a recuperação de senha',
+            error
+        );
+    }
+
+    alert(
+        'Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha.'
+    );
+
+
     switchTab('login');
 }
 
 async function handleUpdatePassword(e) {
+
     e.preventDefault();
+
     if (!ensureConfigured()) return;
+ 
 
-    const password = document.getElementById('new-password').value;
-    const confirm = document.getElementById('confirm-new-password').value;
+    const password =
+        document
+            .getElementById(
+                'new-password'
+            )
+            .value;
 
-    if (password.length < 8) return alert('A senha precisa ter pelo menos 8 caracteres.');
-    if (password !== confirm) return alert('As duas senhas precisam ser iguais.');
 
-    const { error } = await db.auth.updateUser({ password });
-    if (error) return showError('Não foi possível atualizar a senha', error);
+    const confirmPassword =
+        document
+            .getElementById(
+                'confirm-new-password'
+            )
+            .value;
+
+
+    if (password.length < 8) {
+
+        alert(
+            'A senha precisa ter pelo menos 8 caracteres.'
+        );
+
+        return;
+
+    }
+
+
+    if (
+        password !==
+        confirmPassword
+    ) {
+
+        alert(
+            'As duas senhas precisam ser iguais.'
+        );
+
+        return;
+
+    }
+
+
+    const { error } =
+        await db.auth.updateUser({
+            password:
+                password
+        });
+
+
+    if (error) {
+
+        return showError(
+            'Não foi possível atualizar a senha',
+            error
+        );
+
+    }
+
 
     e.target.reset();
-    alert('Senha atualizada com sucesso.');
-    switchTab('feed');
+
+
+    // Remove ?recovery=1 da URL
+    window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+    );
+
+
+    // Encerra a sessão criada pelo link de recuperação
+    await db.auth.signOut();
+
+
+    currentUser = null;
+    currentProfile = null;
+
+
+    updateAuthUI();
+
+
+    alert(
+        'Senha alterada com sucesso! Agora entre com sua nova senha.'
+    );
+
+
+    switchTab(
+        'login'
+    );
+
 }
 
 // ============================================================
@@ -2686,30 +2794,150 @@ async function markHelpResolved(id) {
 // 8) INICIALIZAÇÃO
 // ============================================================
 async function initializeApp() {
+
     updateAuthUI();
 
     if (!CONFIGURED) {
-        console.warn('HenriNews: configure as credenciais públicas do Supabase no início de script.js.');
-        document.getElementById('articles-container').innerHTML = `
-            <div class="col-span-full bg-amber-50 border border-amber-200 text-amber-900 p-5 rounded-xl">
-                <b>Configuração pendente:</b> execute o arquivo database.sql no Supabase e depois coloque a URL e a publishable/anon key no início de <code>script.js</code>.
-            </div>`;
+
+        console.warn(
+            'HenriNews: configure as credenciais públicas do Supabase.'
+        );
+
+        const articlesContainer =
+            document.getElementById('articles-container');
+
+        if (articlesContainer) {
+
+            articlesContainer.innerHTML = `
+                <div class="
+                    col-span-full
+                    bg-amber-50
+                    border
+                    border-amber-200
+                    text-amber-900
+                    p-5
+                    rounded-xl
+                ">
+                    <b>Configuração pendente:</b>
+                    configure o Supabase no script.js.
+                </div>
+            `;
+
+        }
+
         return;
     }
 
-    const { data: { session } } = await db.auth.getSession();
-    await syncCurrentUser(session?.user || null);
 
-    const recoveryMode =
-    new URLSearchParams(window.location.search).get('recovery') === '1';
-    
-    if (recoveryMode && session?.user) {
-        updateAuthUI();
-        switchTab('nova-senha');
-    }
+    // ========================================================
+    // VERIFICAR SE VEIO DO LINK DE RECUPERAÇÃO
+    // ========================================================
+
+    const urlParams =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const isRecovery =
+        urlParams.get('recovery') === '1';
 
 
+    // ========================================================
+    // OUVIR EVENTOS DO SUPABASE
+    // IMPORTANTE: fica antes do getSession()
+    // ========================================================
 
+    db.auth.onAuthStateChange(
+        (event, sessionState) => {
+
+            setTimeout(
+                async () => {
+
+                    console.log(
+                        'Evento de autenticação:',
+                        event
+                    );
+
+
+                    // ----------------------------------------
+                    // RECUPERAÇÃO DE SENHA
+                    // ----------------------------------------
+
+                    if (
+                        event ===
+                        'PASSWORD_RECOVERY'
+                    ) {
+
+                        currentUser =
+                            sessionState?.user || null;
+
+
+                        currentProfile =
+                            currentUser
+                                ? await loadProfile(
+                                    currentUser.id
+                                )
+                                : null;
+
+
+                        updateAuthUI();
+
+
+                        switchTab(
+                            'nova-senha'
+                        );
+
+
+                        return;
+                    }
+
+
+                    // ----------------------------------------
+                    // OUTROS EVENTOS
+                    // ----------------------------------------
+
+                    if (
+                        [
+                            'SIGNED_IN',
+                            'SIGNED_OUT',
+                            'USER_UPDATED'
+                        ].includes(event)
+                    ) {
+
+                        await syncCurrentUser(
+                            sessionState?.user || null
+                        );
+
+                    }
+
+                },
+                0
+            );
+
+        }
+    );
+
+
+    // ========================================================
+    // CARREGAR SESSÃO
+    // ========================================================
+
+    const {
+        data: {
+            session
+        }
+    } =
+        await db.auth.getSession();
+
+
+    await syncCurrentUser(
+        session?.user || null
+    );
+
+
+    // ========================================================
+    // CARREGAR DADOS
+    // ========================================================
 
     await Promise.all([
         loadArticles(),
@@ -2718,43 +2946,54 @@ async function initializeApp() {
         loadBooks(),
         loadPolls()
     ]);
-    
+
+
     if (currentUser) {
+
         await Promise.all([
             loadSavedArticles(),
             loadMyLoans(),
             loadUserVotes()
         ]);
+
     }
-    
+
+
+    // ========================================================
+    // RENDERIZAR SITE
+    // ========================================================
+
     renderArticles();
+
     renderLibrary();
+
     renderMyLoans();
+
     renderPolls();
+
     renderAdminGenreSelect();
+
     updateAuthUI();
+
     renderIcons();
 
 
+    // ========================================================
+    // GARANTIA EXTRA PARA RECUPERAÇÃO
+    // ========================================================
 
-    db.auth.onAuthStateChange((event, sessionState) => {
-        setTimeout(async () => {
-            if (event === 'PASSWORD_RECOVERY') {
-                currentUser = sessionState?.user || null;
-                currentProfile = currentUser
-                    ? await loadProfile(currentUser.id)
-                    : null;
-            
-                updateAuthUI();
-                switchTab('nova-senha');
-                return;
-            }
+    if (
+        isRecovery &&
+        session
+    ) {
 
-            if (['SIGNED_IN', 'SIGNED_OUT', 'USER_UPDATED'].includes(event)) {
-                await syncCurrentUser(sessionState?.user || null);
-            }
-        }, 0);
-    });
+        switchTab(
+            'nova-senha'
+        );
+
+    }
+
+
 }
 
 document.addEventListener('DOMContentLoaded', initializeApp);
