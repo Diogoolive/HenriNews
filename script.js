@@ -275,6 +275,8 @@ function switchTab(tabId) {
 
         renderAdminGenreSelect();
 
+        openAdminSection('overview');
+
     }
 
 
@@ -2372,63 +2374,64 @@ async function deletePoll(pollId) {
 }
 
 // ============================================================
-// 6) PAINEL ADMINISTRATIVO
+// NAVEGAÇÃO INTERNA DO PAINEL GESTOR
 // ============================================================
-async function renderAdminDashboard() {
-    if (!isAdmin() || !db) return;
 
-    const [articleResult, loanResult, helpResult] = await Promise.all([
-        db.from('articles').select('id, title, content, image_url, status, created_at').order('created_at', { ascending: false }),
-        db.from('loans').select('id, code, status, requested_at, due_date, profiles(full_name, email), books(title)').order('requested_at', { ascending: false }),
-        db.from('help_questions').select('id, name, email, message, status, created_at').order('created_at', { ascending: false })
-    ]);
+function openAdminSection(section) {
 
-    if (articleResult.error) return showError('Erro ao carregar o painel', articleResult.error);
-    adminArticles = articleResult.data || [];
-
-    const artList = document.getElementById('admin-articles-list');
-    if (artList) {
-        artList.innerHTML = adminArticles.length ? adminArticles.map(art => `
-            <div class="flex justify-between items-center py-2 gap-2">
-                <span class="truncate font-medium text-slate-700">${escapeHtml(art.title)} <small class="${art.status === 'published' ? 'text-emerald-600' : 'text-amber-600'}">(${art.status === 'published' ? 'publicado' : 'rascunho'})</small></span>
-                <div class="flex gap-2 shrink-0">
-                    <button onclick="loadArticleToEdit(${art.id})" class="text-indigo-600 font-medium hover:underline text-xs">Editar</button>
-                    <button onclick="deleteArticle(${art.id})" class="text-rose-600 font-medium hover:underline text-xs">Excluir</button>
-                </div>
-            </div>`).join('') : '<p class="text-slate-400 py-3 text-center">Nenhum artigo cadastrado.</p>';
+    if (!isAdmin()) {
+        alert('Área exclusiva para gestores autorizados.');
+        return;
     }
 
-    const loanList = document.getElementById('admin-loans-list');
-    if (loanList) {
-        if (loanResult.error) {
-            loanList.innerHTML = '<p class="text-rose-500 py-3">Erro ao carregar empréstimos.</p>';
-        } else {
-            const rows = loanResult.data || [];
-            loanList.innerHTML = rows.length ? rows.map(loan => `
-                <div class="py-3 flex justify-between gap-3 items-start">
-                    <div><b>${escapeHtml(loan.profiles?.full_name || loan.profiles?.email || 'Aluno')}</b> — ${escapeHtml(loan.books?.title || 'Livro')}<br><span class="text-slate-400">${escapeHtml(loan.code)} • ${loanStatusLabel(loan.status)} • prazo ${formatDate(loan.due_date)}</span></div>
-                    ${['requested','borrowed'].includes(loan.status) ? `<button onclick="markLoanReturned(${loan.id})" class="text-emerald-700 font-bold hover:underline">Devolvido</button>` : ''}
-                </div>`).join('') : '<p class="text-slate-400 py-3 text-center">Nenhum empréstimo registrado.</p>';
-        }
+
+    const views = {
+        overview: 'admin-view-overview',
+        articles: 'admin-view-articles',
+        library: 'admin-view-library',
+        polls: 'admin-view-polls',
+        support: 'admin-view-support'
+    };
+
+
+    document
+        .querySelectorAll('.admin-view')
+        .forEach(view => {
+            view.classList.add('hidden');
+        });
+
+
+    const target =
+        document.getElementById(
+            views[section] || views.overview
+        );
+
+
+    if (target) {
+        target.classList.remove('hidden');
     }
 
-    const helpList = document.getElementById('admin-help-list');
-    if (helpList) {
-        if (helpResult.error) {
-            helpList.innerHTML = '<p class="text-rose-500 py-3">Erro ao carregar perguntas.</p>';
-        } else {
-            const rows = helpResult.data || [];
-            helpList.innerHTML = rows.length ? rows.map(item => `
-                <div class="py-4 flex flex-col md:flex-row md:items-start justify-between gap-3">
-                    <div>
-                        <p class="font-bold text-slate-800">${escapeHtml(item.name)} <span class="text-xs font-normal text-slate-400">${escapeHtml(item.email)}</span></p>
-                        <p class="text-slate-600 mt-1">${escapeHtml(item.message)}</p>
-                        <p class="text-xs text-slate-400 mt-1">${formatDate(item.created_at)} • ${item.status === 'resolved' ? 'Resolvido' : 'Aberto'}</p>
-                    </div>
-                    ${item.status !== 'resolved' ? `<button onclick="markHelpResolved(${item.id})" class="text-violet-700 font-bold hover:underline shrink-0">Marcar resolvido</button>` : ''}
-                </div>`).join('') : '<p class="text-slate-400 py-3 text-center">Nenhuma pergunta de suporte.</p>';
-        }
+
+    // Atualiza dados quando necessário
+    if (
+        section === 'articles' ||
+        section === 'library' ||
+        section === 'support'
+    ) {
+        renderAdminDashboard();
     }
+
+
+    if (section === 'library') {
+        renderAdminGenreSelect();
+    }
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+
 
     renderIcons();
 }
@@ -2441,24 +2444,51 @@ async function saveArticle(status) {
     const imageUrl = document.getElementById('admin-art-image').value.trim() || null;
     const content = document.getElementById('admin-art-content').value.trim();
 
-    if (!title || !content) return alert('Informe título e conteúdo.');
+    if (!title || !content) {
+        return alert('Informe título e conteúdo.');
+    }
 
-    const payload = { title, content, image_url: imageUrl, status };
+    const payload = {
+        title,
+        content,
+        image_url: imageUrl,
+        status
+    };
     let result;
 
     if (idInput) {
-        result = await db.from('articles').update(payload).eq('id', Number(idInput));
+        result = await db
+            .from('articles')
+            .update(payload)
+            .eq('id', Number(idInput));
     } else {
-        result = await db.from('articles').insert({ ...payload, author_id: currentUser.id });
+        result = await db
+            .from('articles')
+            .insert({
+                ...payload,
+                author_id: currentUser.id
+            });
     }
 
-    if (result.error) return showError('Não foi possível salvar o artigo', result.error);
+    if (result.error) {
+        return showError(
+            'Não foi possível salvar o artigo',
+            result.error
+        );
+    }
 
     clearArticleForm();
+
     await loadArticles();
     await renderAdminDashboard();
+
     renderArticles();
-    alert(status === 'published' ? 'Artigo publicado com sucesso!' : 'Rascunho salvo no banco de dados!');
+
+    alert(
+        status === 'published'
+            ? 'Artigo publicado com sucesso!'
+            : 'Rascunho salvo no banco de dados!'
+    );
 }
 
 async function handleCreateArticle(e) {
@@ -2472,14 +2502,30 @@ async function handleSaveDraft() {
 
 function loadArticleToEdit(id) {
     if (!isAdmin()) return;
-    const art = adminArticles.find(a => a.id === id);
+
+    const art = adminArticles.find(
+        a => a.id === id
+    );
+
     if (!art) return;
 
-    document.getElementById('admin-article-id').value = art.id;
-    document.getElementById('admin-art-title').value = art.title;
-    document.getElementById('admin-art-image').value = art.image_url || '';
-    document.getElementById('admin-art-content').value = art.content;
-    document.getElementById('admin-art-title').focus();
+    document.getElementById('admin-article-id').value =
+        art.id;
+
+    document.getElementById('admin-art-title').value =
+        art.title;
+
+    document.getElementById('admin-art-image').value =
+        art.image_url || '';
+
+    document.getElementById('admin-art-content').value =
+        art.content;
+
+    openAdminSection('articles');
+
+    document
+        .getElementById('admin-art-title')
+        .focus();
 }
 
 async function deleteArticle(id) {
