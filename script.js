@@ -2377,10 +2377,13 @@ async function deletePoll(pollId) {
 // NAVEGAÇÃO INTERNA DO PAINEL GESTOR
 // ============================================================
 
-function openAdminSection(section) {
+async function openAdminSection(section) {
 
     if (!isAdmin()) {
-        alert('Área exclusiva para gestores autorizados.');
+        alert(
+            'Área exclusiva para gestores autorizados.'
+        );
+
         return;
     }
 
@@ -2397,33 +2400,51 @@ function openAdminSection(section) {
     document
         .querySelectorAll('.admin-view')
         .forEach(view => {
+
             view.classList.add('hidden');
+
         });
 
 
     const target =
         document.getElementById(
-            views[section] || views.overview
+            views[section] ||
+            views.overview
         );
 
 
     if (target) {
-        target.classList.remove('hidden');
+
+        target.classList.remove(
+            'hidden'
+        );
+
     }
 
 
-    // Atualiza dados quando necessário
+    /*
+     * IMPORTANTE:
+     * sempre atualiza os dados do Supabase
+     * ao entrar em uma área administrativa.
+     */
+
     if (
         section === 'articles' ||
         section === 'library' ||
         section === 'support'
     ) {
-        renderAdminDashboard();
+
+        await renderAdminDashboard();
+
     }
 
 
-    if (section === 'library') {
+    if (
+        section === 'library'
+    ) {
+
         renderAdminGenreSelect();
+
     }
 
 
@@ -2436,58 +2457,70 @@ function openAdminSection(section) {
     renderIcons();
 }
 
-async function saveArticle(status) {
-    if (!isAdmin()) return alert('Ação não autorizada.');
+async function handleSendHelpQuestion(e) {
+    e.preventDefault();
 
-    const idInput = document.getElementById('admin-article-id').value;
-    const title = document.getElementById('admin-art-title').value.trim();
-    const imageUrl = document.getElementById('admin-art-image').value.trim() || null;
-    const content = document.getElementById('admin-art-content').value.trim();
+    if (!ensureConfigured()) return;
 
-    if (!title || !content) {
-        return alert('Informe título e conteúdo.');
+    const name = document
+        .getElementById('help-nome')
+        .value
+        .trim();
+
+    const email = document
+        .getElementById('help-email')
+        .value
+        .trim()
+        .toLowerCase();
+
+    const message = document
+        .getElementById('help-mensagem')
+        .value
+        .trim();
+
+
+    if (!name || !email || !message) {
+        alert('Preencha todos os campos.');
+        return;
     }
 
-    const payload = {
-        title,
-        content,
-        image_url: imageUrl,
-        status
-    };
-    let result;
+    const { data, error } = await db
+        .from('help_questions')
+        .insert({
+            user_id: currentUser?.id || null,
+            name: name,
+            email: email,
+            message: message,
+            status: 'open'
+        })
+        .select()
+        .single();
 
-    if (idInput) {
-        result = await db
-            .from('articles')
-            .update(payload)
-            .eq('id', Number(idInput));
-    } else {
-        result = await db
-            .from('articles')
-            .insert({
-                ...payload,
-                author_id: currentUser.id
-            });
-    }
 
-    if (result.error) {
+    if (error) {
+        console.error(
+            'Erro ao enviar pergunta:',
+            error
+        );
+
+
         return showError(
-            'Não foi possível salvar o artigo',
-            result.error
+            'Não foi possível enviar sua pergunta',
+            error
         );
     }
 
-    clearArticleForm();
+    console.log(
+        'Pergunta salva:',
+        data
+    );
 
-    await loadArticles();
-    await renderAdminDashboard();
-
-    renderArticles();
+    document
+        .getElementById('help-mensagem')
+        .value = '';
 
     alert(
-        status === 'published'
-            ? 'Artigo publicado com sucesso!'
-            : 'Rascunho salvo no banco de dados!'
+        'Pergunta enviada com sucesso para a equipe de suporte!'
     );
 }
 
@@ -2502,30 +2535,14 @@ async function handleSaveDraft() {
 
 function loadArticleToEdit(id) {
     if (!isAdmin()) return;
-
-    const art = adminArticles.find(
-        a => a.id === id
-    );
-
+    const art = adminArticles.find(a => a.id === id);
     if (!art) return;
 
-    document.getElementById('admin-article-id').value =
-        art.id;
-
-    document.getElementById('admin-art-title').value =
-        art.title;
-
-    document.getElementById('admin-art-image').value =
-        art.image_url || '';
-
-    document.getElementById('admin-art-content').value =
-        art.content;
-
-    openAdminSection('articles');
-
-    document
-        .getElementById('admin-art-title')
-        .focus();
+    document.getElementById('admin-article-id').value = art.id;
+    document.getElementById('admin-art-title').value = art.title;
+    document.getElementById('admin-art-image').value = art.image_url || '';
+    document.getElementById('admin-art-content').value = art.content;
+    document.getElementById('admin-art-title').focus();
 }
 
 async function deleteArticle(id) {
