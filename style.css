@@ -1,159 +1,664 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* ==========================================================
+   HENRINEWS - STYLE.CSS
+   ========================================================== */
 
-body {
-    font-family: 'Inter', sans-serif;
-}
 
-.tab-content {
-    display: none;
-}
+/* ==========================================================
+   1. FONTE
+   ========================================================== */
 
-.tab-content.active {
-    display: block;
-}
+   @import url(
+    'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
+);
+
 
 html {
     scroll-behavior: smooth;
 }
 
-html,
+
 body {
-    width: 100%;
+    font-family: 'Inter', sans-serif;
+
+    margin: 0;
+
     max-width: 100%;
+
     overflow-x: hidden;
 }
 
-img,
-video,
-iframe {
-    max-width: 100%;
+
+/* ==========================================================
+   2. SISTEMA DE TELAS
+   ========================================================== */
+
+.tab-content {
+    display: none;
 }
 
+
+.tab-content.active {
+    display: block;
+}
+
+
+/* ==========================================================
+   3. ELEMENTOS GERAIS
+   ========================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+img {
+    max-width: 100%;
+
+    height: auto;
+}
+
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+
+button {
+    cursor: pointer;
+}
+
+
 button:disabled {
-    opacity: .6;
+    opacity: 0.6;
+
     cursor: not-allowed;
 }
 
+
+textarea {
+    resize: vertical;
+}
+
+
+/* ==========================================================
+   4. STATUS DOS EMPRÉSTIMOS
+   ========================================================== */
+
 .status-pill {
     display: inline-flex;
+
     align-items: center;
-    padding: .2rem .55rem;
+
+    padding: 0.2rem 0.55rem;
+
     border-radius: 9999px;
-    font-size: .7rem;
+
+    font-size: 0.7rem;
+
     font-weight: 700;
 }
 
+
+/* ==========================================================
+   5. MENU MOBILE
+   ========================================================== */
+
+details > summary {
+    list-style: none;
+}
+
+
+details > summary::-webkit-details-marker {
+    display: none;
+}
+
+
 .mobile-nav-item {
     width: 100%;
+
     display: flex;
+
     align-items: center;
-    gap: .75rem;
-    padding: .75rem 1rem;
-    border-radius: .5rem;
+
+    gap: 0.75rem;
+
+    padding: 0.75rem 1rem;
+
+    border: none;
+
+    border-radius: 0.5rem;
+
+    background: transparent;
+
+    color: white;
+
     text-align: left;
-    transition: background-color .2s ease;
+
+    font-size: 0.875rem;
+
+    font-weight: 500;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
 }
+
 
 .mobile-nav-item:hover {
     background-color: rgb(67 56 202);
 }
 
-/* Evita o zoom automático do iPhone ao tocar em formulários. */
-input,
-select,
-textarea {
-    font-size: 16px;
-}
 
-/* Quebra textos grandes, URLs e códigos sem estourar a tela. */
-p,
-span,
-a,
-button,
-label,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    overflow-wrap: anywhere;
-}
-
-@media (max-width: 767px) {
-    main {
-        padding-top: 1rem !important;
-        padding-bottom: 2rem !important;
-    }
-
-    h1 {
-        font-size: 1.65rem !important;
-        line-height: 2rem !important;
-    }
-
-    h2 {
-        line-height: 1.8rem !important;
-    }
-
-    .tab-content {
-        width: 100%;
-        min-width: 0;
-    }
-
-    /* Cards e formulários ficam mais confortáveis em telas pequenas. */
-    input,
-    select,
-    textarea,
-    button {
-        min-width: 0;
-    }
-
-    /* Evita que imagens de notícias ocupem altura exagerada. */
-    #article-detail-content img {
-        height: auto !important;
-        max-height: 18rem;
-        object-fit: cover;
-    }
-
-    /* Listagens administrativas podem conter textos muito compridos. */
-    #admin-articles-list > div,
-    #admin-loans-list > div,
-    #admin-help-list > div,
-    #my-loans-container > div {
-        min-width: 0;
-    }
-}
-
-
-/* Menu mobile sem JavaScript extra: usa <details>/<summary>. */
-summary::-webkit-details-marker { display: none; }
-summary { list-style: none; }
-
-/* Garante que elementos interativos permaneçam clicáveis. */
-button, a, input, select, textarea, summary { pointer-events: auto; }
-nav { isolation: isolate; }
-
-
-/* =========================================
-   AVATAR DOS PROFESSORES
-========================================= */
+/* ==========================================================
+   6. CORPO DOCENTE
+   ========================================================== */
 
 .teacher-avatar {
     width: 4rem;
+
     height: 4rem;
 
     margin-left: auto;
+
     margin-right: auto;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     border-radius: 9999px;
 
     background-color: #d1fae5;
+
     color: #059669;
 
     font-size: 1.25rem;
+
     font-weight: 700;
+
+    flex-shrink: 0;
+}
+
+
+/* ==========================================================
+   7. BIBLIOTECA
+   ========================================================== */
+
+#tab-biblioteca {
+    width: 100%;
+
+    min-width: 0;
+}
+
+
+#tab-biblioteca * {
+    min-width: 0;
+}
+
+
+/* Evita títulos muito grandes quebrando o layout */
+
+#tab-biblioteca h1,
+#tab-biblioteca h2,
+#tab-biblioteca h3,
+#tab-biblioteca h4,
+#tab-biblioteca p {
+    overflow-wrap: break-word;
+
+    word-break: normal;
+}
+
+
+/* ==========================================================
+   8. NOVOS LIVROS
+   ========================================================== */
+
+#new-books-container {
+    width: 100%;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+
+    scrollbar-color: #c7d2fe transparent;
+}
+
+
+#new-books-container::-webkit-scrollbar {
+    height: 7px;
+}
+
+
+#new-books-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+#new-books-container::-webkit-scrollbar-thumb {
+    background-color: #c7d2fe;
+
+    border-radius: 999px;
+}
+
+
+#new-books-container::-webkit-scrollbar-thumb:hover {
+    background-color: #a5b4fc;
+}
+
+
+/* ==========================================================
+   9. GÊNEROS
+   ========================================================== */
+
+#genres-container button {
+    min-height: 135px;
+}
+
+
+#genres-container button:hover {
+    transform: translateY(-2px);
+}
+
+
+/* ==========================================================
+   10. SUBGÊNEROS
+   ========================================================== */
+
+#subgenres-container button {
+    min-height: 78px;
+}
+
+
+#subgenres-container button:hover {
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================================
+   11. CARDS DOS LIVROS
+   ========================================================== */
+
+#library-search-results > div,
+#genre-books-container > div,
+#subgenre-books-container > div,
+#new-books-container > div {
+    overflow: hidden;
+}
+
+
+#library-search-results h3,
+#genre-books-container h3,
+#subgenre-books-container h3,
+#new-books-container h3 {
+    overflow-wrap: break-word;
+}
+
+
+/* ==========================================================
+   12. FORMULÁRIOS
+   ========================================================== */
+
+input,
+select,
+textarea {
+    max-width: 100%;
+}
+
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+}
+
+
+/* ==========================================================
+   13. PAINEL GESTOR
+   ========================================================== */
+
+#tab-admin {
+    min-width: 0;
+}
+
+
+#tab-admin input,
+#tab-admin select,
+#tab-admin textarea {
+    width: 100%;
+}
+
+
+#admin-articles-list,
+#admin-loans-list,
+#admin-help-list {
+    overflow-wrap: break-word;
+}
+
+
+#admin-loans-list {
+    overflow-x: hidden;
+}
+
+
+/* ==========================================================
+   14. ARTIGOS
+   ========================================================== */
+
+#articles-container {
+    min-width: 0;
+}
+
+
+#article-detail-content {
+    min-width: 0;
+}
+
+
+#article-detail-content img {
+    width: 100%;
+
+    object-fit: cover;
+}
+
+
+/* ==========================================================
+   15. RODAPÉ
+   ========================================================== */
+
+footer button {
+    text-align: left;
+}
+
+
+/* ==========================================================
+   16. TABELAS
+   ========================================================== */
+
+.table-responsive {
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+table {
+    border-collapse: collapse;
+}
+
+
+/* ==========================================================
+   17. TELAS MÉDIAS
+   ========================================================== */
+
+@media (max-width: 1024px) {
+
+    #genres-container button {
+        min-height: 125px;
+    }
+
+}
+
+
+/* ==========================================================
+   18. CELULAR
+   ========================================================== */
+
+@media (max-width: 767px) {
+
+    /* ------------------------------------------
+       CONTEÚDO PRINCIPAL
+       ------------------------------------------ */
+
+    main {
+        padding-top: 1rem !important;
+
+        padding-bottom: 2rem !important;
+    }
+
+
+    /* ------------------------------------------
+       TÍTULOS
+       ------------------------------------------ */
+
+    h1 {
+        font-size: 1.65rem !important;
+
+        line-height: 2rem !important;
+    }
+
+
+    h2 {
+        font-size: 1.35rem !important;
+
+        line-height: 1.75rem !important;
+    }
+
+
+    /* ------------------------------------------
+       TELAS
+       ------------------------------------------ */
+
+    .tab-content {
+        width: 100%;
+
+        min-width: 0;
+    }
+
+
+    /* ------------------------------------------
+       INPUTS
+       Evita zoom automático em alguns celulares
+       ------------------------------------------ */
+
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+
+
+    /* ------------------------------------------
+       MENU
+       ------------------------------------------ */
+
+    nav {
+        width: 100%;
+    }
+
+
+    /* ------------------------------------------
+       NOVOS LIVROS
+       ------------------------------------------ */
+
+    #new-books-container {
+        margin-right: -1rem;
+
+        padding-right: 1rem;
+    }
+
+
+    #new-books-container > div {
+        min-width: 255px;
+
+        max-width: 255px;
+    }
+
+
+    /* ------------------------------------------
+       GÊNEROS
+       ------------------------------------------ */
+
+    #genres-container {
+        gap: 0.75rem;
+    }
+
+
+    #genres-container button {
+        min-height: 120px;
+
+        padding: 1rem;
+    }
+
+
+    /* ------------------------------------------
+       SUBGÊNEROS
+       ------------------------------------------ */
+
+    #subgenres-container {
+        gap: 0.75rem;
+    }
+
+
+    /* ------------------------------------------
+       PAINEL GESTOR
+       ------------------------------------------ */
+
+    #tab-admin > div {
+        min-width: 0;
+    }
+
+
+    #admin-articles-list > div {
+        align-items: flex-start;
+    }
+
+
+    #admin-loans-list > div {
+        flex-direction: column;
+    }
+
+
+    /* ------------------------------------------
+       BOTÕES
+       ------------------------------------------ */
+
+    button {
+        max-width: 100%;
+    }
+
+
+    /* ------------------------------------------
+       DETALHE DA NOTÍCIA
+       ------------------------------------------ */
+
+    #article-detail-content img {
+        height: auto !important;
+
+        max-height: 420px;
+    }
+
+
+    /* ------------------------------------------
+       TABELAS
+       ------------------------------------------ */
+
+    table {
+        min-width: 650px;
+    }
+
+}
+
+
+/* ==========================================================
+   19. CELULARES PEQUENOS
+   ========================================================== */
+
+@media (max-width: 480px) {
+
+    /* ------------------------------------------
+       GÊNEROS
+       ------------------------------------------ */
+
+    #genres-container {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    #genres-container button {
+        padding: 0.85rem;
+
+        min-height: 115px;
+    }
+
+
+    #genres-container h3 {
+        font-size: 0.9rem;
+    }
+
+
+    /* ------------------------------------------
+       NOVOS LIVROS
+       ------------------------------------------ */
+
+    #new-books-container > div {
+        min-width: 235px;
+
+        max-width: 235px;
+    }
+
+
+    /* ------------------------------------------
+       CARDS
+       ------------------------------------------ */
+
+    #library-search-results,
+    #genre-books-container,
+    #subgenre-books-container {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* ------------------------------------------
+       PROFESSORES
+       ------------------------------------------ */
+
+    .teacher-avatar {
+        width: 3.75rem;
+
+        height: 3.75rem;
+
+        font-size: 1.1rem;
+    }
+
+
+    /* ------------------------------------------
+       RODAPÉ
+       ------------------------------------------ */
+
+    footer {
+        text-align: left;
+    }
+
+}
+
+
+/* ==========================================================
+   20. TELAS MUITO PEQUENAS
+   ========================================================== */
+
+@media (max-width: 360px) {
+
+    #genres-container {
+        grid-template-columns: 1fr;
+    }
+
+
+    #new-books-container > div {
+        min-width: 215px;
+
+        max-width: 215px;
+    }
+
 }

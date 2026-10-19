@@ -2897,70 +2897,220 @@
                         class="space-y-4"
                         onsubmit="handleCreateBook(event)"
                     >
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-
-                            <div>
-
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">
-                                    Título do Livro
-                                </label>
-
-                                <input
-                                    id="admin-book-title"
-                                    type="text"
-                                    required
-                                    class="
-                                        w-full
-                                        px-3
-                                        py-2
-                                        border
-                                        rounded-lg
-                                        focus:ring-2
-                                        focus:ring-emerald-500
-                                        focus:outline-none
-                                    "
-                                >
-
-                            </div>
-
-
-                            <div>
-
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">
-                                    Autor
-                                </label>
-
-                                <input
-                                    id="admin-book-author"
-                                    type="text"
-                                    required
-                                    class="
-                                        w-full
-                                        px-3
-                                        py-2
-                                        border
-                                        rounded-lg
-                                        focus:ring-2
-                                        focus:ring-emerald-500
-                                        focus:outline-none
-                                    "
-                                >
-
-                            </div>
-
-                        </div>
-
-
+                
+                        <!-- TÍTULO -->
+                
                         <div>
-
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">
-                                Breve Descrição
+                
+                            <label
+                                class="
+                                    block
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                    mb-1
+                                "
+                            >
+                                Título do Livro
                             </label>
-
+                
                             <input
-                                id="admin-book-desc"
+                                id="admin-book-title"
                                 type="text"
+                                required
+                                placeholder="Ex.: Dom Casmurro"
+                                class="
+                                    w-full
+                                    px-3
+                                    py-2
+                                    border
+                                    rounded-lg
+                                    focus:ring-2
+                                    focus:ring-emerald-500
+                                    focus:outline-none
+                                "
+                            >
+                
+                        </div>
+                
+                
+                        <!-- AUTOR -->
+                
+                        <div>
+                
+                            <label
+                                class="
+                                    block
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                    mb-1
+                                "
+                            >
+                                Autor
+                            </label>
+                
+                            <input
+                                id="admin-book-author"
+                                type="text"
+                                required
+                                placeholder="Ex.: Machado de Assis"
+                                class="
+                                    w-full
+                                    px-3
+                                    py-2
+                                    border
+                                    rounded-lg
+                                    focus:ring-2
+                                    focus:ring-emerald-500
+                                    focus:outline-none
+                                "
+                            >
+                
+                        </div>
+                
+                
+                        <!-- DESCRIÇÃO -->
+                
+                        <div>
+                
+                            <label
+                                class="
+                                    block
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                    mb-1
+                                "
+                            >
+                                Descrição
+                            </label>
+                
+                            <textarea
+                                id="admin-book-desc"
+                                rows="3"
+                                placeholder="Breve descrição do livro"
+                                class="
+                                    w-full
+                                    px-3
+                                    py-2
+                                    border
+                                    rounded-lg
+                                    focus:ring-2
+                                    focus:ring-emerald-500
+                                    focus:outline-none
+                                "
+                            ></textarea>
+                
+                        </div>
+                
+                
+                        <!-- GÊNERO -->
+                
+                        <div>
+                
+                            <label
+                                class="
+                                    block
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                    mb-1
+                                "
+                            >
+                                Gênero
+                            </label>
+                
+                            <select
+                                id="admin-book-genre"
+                                required
+                                onchange="updateAdminSubgenres()"
+                                class="
+                                    w-full
+                                    px-3
+                                    py-2.5
+                                    border
+                                    rounded-lg
+                                    bg-white
+                                    focus:ring-2
+                                    focus:ring-emerald-500
+                                    focus:outline-none
+                                "
+                            >
+                
+                                <option value="">
+                                    Selecione um gênero
+                                </option>
+                
+                            </select>
+                
+                        </div>
+                
+                
+                        <!-- SUBGÊNERO -->
+                
+                        <div>
+                
+                            <label
+                                class="
+                                    block
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                    mb-1
+                                "
+                            >
+                                Subgênero
+                                <span class="font-normal text-slate-400">
+                                    (opcional)
+                                </span>
+                            </label>
+                
+                            <select
+                                id="admin-book-subgenre"
+                                class="
+                                    w-full
+                                    px-3
+                                    py-2.5
+                                    border
+                                    rounded-lg
+                                    bg-white
+                                    focus:ring-2
+                                    focus:ring-emerald-500
+                                    focus:outline-none
+                                "
+                            >
+                
+                                <option value="">
+                                    Nenhum subgênero
+                                </option>
+                
+                            </select>
+                
+                        </div>
+                
+                
+                        <!-- QUANTIDADE -->
+                
+                        <div>
+                
+                            <label
+                                class="
+                                    block
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                    mb-1
+                                "
+                            >
+                                Quantidade de Exemplares
+                            </label>
+                
+                            <input
+                                id="admin-book-copies"
+                                type="number"
+                                min="1"
+                                value="1"
                                 required
                                 class="
                                     w-full
@@ -2973,10 +3123,10 @@
                                     focus:outline-none
                                 "
                             >
-
+                
                         </div>
-
-
+                
+                
                         <button
                             type="submit"
                             class="
@@ -2985,13 +3135,14 @@
                                 hover:bg-emerald-700
                                 text-white
                                 font-medium
-                                py-2
+                                py-2.5
                                 rounded-lg
+                                transition
                             "
                         >
-                            Cadastrar Novo Livro
+                            Cadastrar Livro
                         </button>
-
+                
                     </form>
 
 

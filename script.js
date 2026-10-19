@@ -127,27 +127,184 @@ function updateAuthUI() {
     renderIcons();
 }
 
+
 function switchTab(tabId) {
+
+    // ========================================================
+    // PROTEÇÃO DO PAINEL GESTOR
+    // ========================================================
+
     if (tabId === 'admin' && !isAdmin()) {
-        alert('Área exclusiva para gestores autorizados.');
+
+        alert(
+            'Área exclusiva para gestores autorizados.'
+        );
+
         tabId = 'feed';
     }
 
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    const target = document.getElementById(`tab-${tabId}`);
-    if (target) target.classList.add('active');
 
-    if (tabId === 'feed') renderArticles();
-    if (tabId === 'biblioteca') {
-        renderLibrary();
-        renderMyLoans();
+
+    // ========================================================
+    // ESCONDER TODAS AS TELAS
+    // ========================================================
+
+    document
+        .querySelectorAll('.tab-content')
+        .forEach(el => {
+
+            el.classList.remove('active');
+
+        });
+
+
+    // ========================================================
+    // MOSTRAR A TELA ESCOLHIDA
+    // ========================================================
+
+    const target =
+        document.getElementById(
+            `tab-${tabId}`
+        );
+
+
+    if (target) {
+
+        target.classList.add('active');
+
     }
-    if (tabId === 'enquetes') renderPolls();
-    if (tabId === 'admin') renderAdminDashboard();
-    if (tabId === 'ajuda') setupHelpForm();
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // ========================================================
+    // FEED
+    // ========================================================
+
+    if (tabId === 'feed') {
+
+        renderArticles();
+
+    }
+
+
+    // ========================================================
+    // BIBLIOTECA
+    // ========================================================
+
+    if (tabId === 'biblioteca') {
+
+        // Volta a biblioteca para a tela inicial
+        // sempre que clicar no menu Biblioteca
+
+        const searchInput =
+            document.getElementById(
+                'lib-search-input'
+            );
+
+
+        if (searchInput) {
+
+            searchInput.value = '';
+
+        }
+
+
+        document
+            .getElementById(
+                'library-search-section'
+            )
+            ?.classList
+            .add('hidden');
+
+
+        document
+            .getElementById(
+                'library-genre-view'
+            )
+            ?.classList
+            .add('hidden');
+
+
+        document
+            .getElementById(
+                'library-subgenre-view'
+            )
+            ?.classList
+            .add('hidden');
+
+
+        document
+            .getElementById(
+                'library-home'
+            )
+            ?.classList
+            .remove('hidden');
+
+
+        currentLibraryGenreId = null;
+        currentLibrarySubgenreId = null;
+
+
+        // Atualiza livros e empréstimos
+
+        renderLibrary();
+
+        renderMyLoans();
+
+    }
+
+
+
+    // ========================================================
+    // ENQUETES
+    // ========================================================
+
+    if (tabId === 'enquetes') {
+
+        renderPolls();
+
+    }
+
+
+    // ========================================================
+    // PAINEL GESTOR
+    // ========================================================
+
+    if (tabId === 'admin') {
+
+        renderAdminDashboard();
+
+        renderAdminGenreSelect();
+
+    }
+
+
+    // ========================================================
+    // AJUDA
+    // ========================================================
+
+    if (tabId === 'ajuda') {
+
+        setupHelpForm();
+
+    }
+
+
+    // ========================================================
+    // VOLTAR AO TOPO
+    // ========================================================
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+
+
+    // ========================================================
+    // ATUALIZAR ÍCONES
+    // ========================================================
+
     renderIcons();
+
 }
 
 async function loadProfile(userId) {
@@ -392,62 +549,1532 @@ async function toggleSaveArticle(id) {
 }
 
 // ============================================================
-// 4) BIBLIOTECA E EMPRÉSTIMOS
+// 4) BIBLIOTECA - GÊNEROS, SUBGÊNEROS E LIVROS
 // ============================================================
-async function loadBooks() {
+
+let genres = [];
+let subgenres = [];
+
+let currentLibraryGenreId = null;
+let currentLibrarySubgenreId = null;
+
+
+// ============================================================
+// CARREGAR GÊNEROS
+// ============================================================
+
+async function loadGenres() {
+
     if (!db) return;
+
     const { data, error } = await db
-        .from('books')
-        .select('id, title, author, description, total_copies, available_copies, active')
-        .eq('active', true)
-        .order('title');
+        .from('genres')
+        .select('id, name')
+        .order('name', {
+            ascending: true
+        });
 
-    if (error) return console.error('Erro ao carregar livros:', error);
-    books = data || [];
-}
 
-function renderLibrary() {
-    const container = document.getElementById('library-container');
-    if (!container) return;
+    if (error) {
 
-    const search = (document.getElementById('lib-search-input')?.value || '').toLowerCase();
-    const filterType = document.getElementById('lib-filter-select')?.value || 'all';
-    container.innerHTML = '';
+        console.error(
+            'Erro ao carregar gêneros:',
+            error
+        );
 
-    const filtered = books.filter(book => {
-        const title = book.title.toLowerCase().includes(search);
-        const author = book.author.toLowerCase().includes(search);
-        const desc = (book.description || '').toLowerCase().includes(search);
-        if (filterType === 'titulo') return title;
-        if (filterType === 'autor') return author;
-        if (filterType === 'descricao') return desc;
-        return title || author || desc;
-    });
-
-    if (!filtered.length) {
-        container.innerHTML = '<div class="col-span-full text-slate-400 py-12 text-center text-sm">Nenhum livro corresponde à busca.</div>';
         return;
+
     }
 
-    filtered.forEach(book => {
-        const available = book.available_copies > 0;
-        const card = document.createElement('div');
-        card.className = 'bg-white p-5 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition';
-        card.innerHTML = `
-            <div class="space-y-1.5">
-                <span class="text-[10px] uppercase font-bold ${available ? 'text-emerald-600 bg-emerald-50' : 'text-rose-600 bg-rose-50'} px-2 py-0.5 rounded tracking-wider">
-                    ${available ? `${book.available_copies} disponível(is)` : 'Indisponível'}
-                </span>
-                <h3 class="font-bold text-base text-slate-900 leading-snug">${escapeHtml(book.title)}</h3>
-                <p class="text-xs text-slate-500 font-medium">Por: ${escapeHtml(book.author)}</p>
-                <p class="text-xs text-slate-600 leading-relaxed pt-1">${escapeHtml(book.description || '')}</p>
-            </div>
-            <button onclick="requestLoan(${book.id})" ${available ? '' : 'disabled'} class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 rounded-lg text-xs transition">
-                ${available ? 'Solicitar Empréstimo' : 'Sem exemplares disponíveis'}
-            </button>`;
-        container.appendChild(card);
-    });
+
+    genres = data || [];
 }
+
+
+// ============================================================
+// CARREGAR SUBGÊNEROS
+// ============================================================
+
+async function loadSubgenres() {
+
+    if (!db) return;
+
+    const { data, error } = await db
+        .from('subgenres')
+        .select(
+            'id, genre_id, name'
+        )
+        .order(
+            'name',
+            {
+                ascending: true
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            'Erro ao carregar subgêneros:',
+            error
+        );
+
+        return;
+
+    }
+
+
+    subgenres = data || [];
+}
+
+
+// ============================================================
+// CARREGAR LIVROS
+// ============================================================
+
+async function loadBooks() {
+
+    if (!db) return;
+
+
+    const { data, error } = await db
+        .from('books')
+        .select(`
+            id,
+            title,
+            author,
+            description,
+            total_copies,
+            available_copies,
+            active,
+            created_at,
+            genre_id,
+            subgenre_id
+        `)
+        .eq(
+            'active',
+            true
+        )
+        .order(
+            'created_at',
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            'Erro ao carregar livros:',
+            error
+        );
+
+        return;
+
+    }
+
+
+    books = data || [];
+
+}
+
+
+// ============================================================
+// CRIAR CARD DO LIVRO
+// ============================================================
+
+function createBookCard(book, extraClasses = '') {
+
+    const available =
+        Number(book.available_copies) > 0;
+
+
+    const genre =
+        genres.find(
+            item =>
+                Number(item.id) ===
+                Number(book.genre_id)
+        );
+
+
+    const subgenre =
+        subgenres.find(
+            item =>
+                Number(item.id) ===
+                Number(book.subgenre_id)
+        );
+
+
+    return `
+
+        <div
+            class="
+                bg-white
+                p-5
+                rounded-xl
+                border
+                border-slate-100
+                shadow-sm
+                flex
+                flex-col
+                justify-between
+                gap-4
+                hover:shadow-md
+                transition
+                ${extraClasses}
+            "
+        >
+
+            <div class="space-y-2">
+
+                <div
+                    class="
+                        flex
+                        flex-wrap
+                        items-center
+                        gap-2
+                    "
+                >
+
+                    <span
+                        class="
+                            text-[10px]
+                            uppercase
+                            font-bold
+                            px-2
+                            py-1
+                            rounded
+                            tracking-wider
+
+                            ${
+                                available
+                                ? 'text-emerald-700 bg-emerald-50'
+                                : 'text-rose-700 bg-rose-50'
+                            }
+                        "
+                    >
+
+                        ${
+                            available
+                            ? `${book.available_copies} disponível(is)`
+                            : 'Indisponível'
+                        }
+
+                    </span>
+
+
+                    ${
+                        genre
+                        ? `
+
+                            <span
+                                class="
+                                    text-[10px]
+                                    bg-indigo-50
+                                    text-indigo-700
+                                    px-2
+                                    py-1
+                                    rounded
+                                    font-semibold
+                                "
+                            >
+
+                                ${escapeHtml(genre.name)}
+
+                            </span>
+
+                        `
+                        : ''
+                    }
+
+                </div>
+
+
+                <h3
+                    class="
+                        font-bold
+                        text-base
+                        text-slate-900
+                        leading-snug
+                    "
+                >
+
+                    ${escapeHtml(book.title)}
+
+                </h3>
+
+
+                <p
+                    class="
+                        text-xs
+                        text-slate-500
+                        font-medium
+                    "
+                >
+
+                    Por:
+                    ${escapeHtml(book.author)}
+
+                </p>
+
+
+                ${
+                    subgenre
+                    ? `
+
+                        <p
+                            class="
+                                text-xs
+                                text-indigo-600
+                                font-medium
+                            "
+                        >
+
+                            ${escapeHtml(subgenre.name)}
+
+                        </p>
+
+                    `
+                    : ''
+                }
+
+
+                ${
+                    book.description
+                    ? `
+
+                        <p
+                            class="
+                                text-xs
+                                text-slate-600
+                                leading-relaxed
+                                pt-1
+                            "
+                        >
+
+                            ${escapeHtml(book.description)}
+
+                        </p>
+
+                    `
+                    : ''
+                }
+
+            </div>
+
+
+            <button
+
+                onclick="requestLoan(${book.id})"
+
+                ${available ? '' : 'disabled'}
+
+                class="
+                    w-full
+                    bg-slate-900
+                    hover:bg-slate-800
+                    text-white
+                    font-medium
+                    py-2
+                    rounded-lg
+                    text-xs
+                    transition
+                "
+            >
+
+                ${
+                    available
+                    ? 'Solicitar Empréstimo'
+                    : 'Sem Exemplares Disponíveis'
+                }
+
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+// ============================================================
+// TELA PRINCIPAL
+// ============================================================
+
+function renderLibrary() {
+
+    renderNewBooks();
+    renderGenres();
+
+}
+
+
+// ============================================================
+// NOVOS LIVROS
+// ============================================================
+
+function renderNewBooks() {
+
+    const container =
+        document.getElementById(
+            'new-books-container'
+        );
+
+
+    if (!container) return;
+
+
+    const recentBooks =
+        [...books]
+            .sort(
+                (a, b) =>
+                    new Date(b.created_at) -
+                    new Date(a.created_at)
+            )
+            .slice(
+                0,
+                8
+            );
+
+
+    if (!recentBooks.length) {
+
+        container.innerHTML = `
+
+            <div
+                class="
+                    text-sm
+                    text-slate-400
+                    py-8
+                "
+            >
+
+                Nenhum livro cadastrado ainda.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        recentBooks
+            .map(
+                book =>
+                    createBookCard(
+                        book,
+                        'min-w-[260px] max-w-[260px] snap-start'
+                    )
+            )
+            .join('');
+
+}
+
+
+// ============================================================
+// GÊNEROS
+// ============================================================
+
+function renderGenres() {
+
+    const container =
+        document.getElementById(
+            'genres-container'
+        );
+
+
+    if (!container) return;
+
+
+    if (!genres.length) {
+
+        container.innerHTML = `
+
+            <div
+                class="
+                    col-span-full
+                    text-center
+                    text-slate-400
+                    py-8
+                "
+            >
+
+                Nenhum gênero cadastrado.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        genres
+            .map(
+                genre => {
+
+                    const numberOfBooks =
+                        books.filter(
+                            book =>
+                                Number(book.genre_id) ===
+                                Number(genre.id)
+                        ).length;
+
+
+                    const numberOfSubgenres =
+                        subgenres.filter(
+                            sub =>
+                                Number(sub.genre_id) ===
+                                Number(genre.id)
+                        ).length;
+
+
+                    return `
+
+                        <button
+                            type="button"
+
+                            onclick="
+                                openGenre(
+                                    ${genre.id}
+                                )
+                            "
+
+                            class="
+                                bg-white
+                                border
+                                border-slate-200
+                                rounded-xl
+                                p-5
+                                text-left
+                                shadow-sm
+                                hover:shadow-md
+                                hover:border-indigo-300
+                                transition
+                                group
+                            "
+                        >
+
+                            <div
+                                class="
+                                    flex
+                                    justify-between
+                                    items-start
+                                    gap-3
+                                "
+                            >
+
+                                <div>
+
+                                    <div
+                                        class="
+                                            w-10
+                                            h-10
+                                            rounded-lg
+                                            bg-indigo-100
+                                            text-indigo-600
+                                            flex
+                                            items-center
+                                            justify-center
+                                            mb-3
+                                        "
+                                    >
+
+                                        <i
+                                            data-lucide="book-open"
+                                            class="w-5 h-5"
+                                        ></i>
+
+                                    </div>
+
+
+                                    <h3
+                                        class="
+                                            font-bold
+                                            text-slate-900
+                                            group-hover:text-indigo-600
+                                        "
+                                    >
+
+                                        ${escapeHtml(genre.name)}
+
+                                    </h3>
+
+
+                                    <p
+                                        class="
+                                            text-xs
+                                            text-slate-500
+                                            mt-1
+                                        "
+                                    >
+
+                                        ${numberOfBooks}
+                                        livro(s)
+
+                                    </p>
+
+
+                                    <p
+                                        class="
+                                            text-xs
+                                            text-slate-400
+                                        "
+                                    >
+
+                                        ${numberOfSubgenres}
+                                        subgênero(s)
+
+                                    </p>
+
+                                </div>
+
+
+                                <i
+                                    data-lucide="chevron-right"
+                                    class="
+                                        w-5
+                                        h-5
+                                        text-slate-300
+                                        group-hover:text-indigo-600
+                                    "
+                                ></i>
+
+                            </div>
+
+                        </button>
+
+                    `;
+
+                }
+            )
+            .join('');
+
+
+    renderIcons();
+
+}
+
+
+// ============================================================
+// ABRIR UM GÊNERO
+// ============================================================
+
+function openGenre(genreId) {
+
+    const genre =
+        genres.find(
+            item =>
+                Number(item.id) ===
+                Number(genreId)
+        );
+
+
+    if (!genre) return;
+
+
+    currentLibraryGenreId =
+        Number(genreId);
+
+    currentLibrarySubgenreId =
+        null;
+
+
+    document
+        .getElementById('library-home')
+        ?.classList
+        .add('hidden');
+
+
+    document
+        .getElementById('library-subgenre-view')
+        ?.classList
+        .add('hidden');
+
+
+    document
+        .getElementById('library-genre-view')
+        ?.classList
+        .remove('hidden');
+
+
+    const title =
+        document.getElementById(
+            'current-genre-title'
+        );
+
+
+    if (title) {
+
+        title.textContent =
+            genre.name;
+
+    }
+
+
+    renderSubgenresForGenre(
+        genre.id
+    );
+
+
+    renderBooksForGenre(
+        genre.id
+    );
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+
+
+    renderIcons();
+
+}
+
+
+// ============================================================
+// SUBGÊNEROS DO GÊNERO
+// ============================================================
+
+function renderSubgenresForGenre(genreId) {
+
+    const container =
+        document.getElementById(
+            'subgenres-container'
+        );
+
+
+    if (!container) return;
+
+
+    const filtered =
+        subgenres.filter(
+            sub =>
+                Number(sub.genre_id) ===
+                Number(genreId)
+        );
+
+
+    if (!filtered.length) {
+
+        container.innerHTML = `
+
+            <div
+                class="
+                    col-span-full
+                    bg-slate-50
+                    rounded-xl
+                    p-5
+                    text-sm
+                    text-slate-500
+                "
+            >
+
+                Este gênero ainda não possui subgêneros.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        filtered
+            .map(
+                subgenre => {
+
+                    const count =
+                        books.filter(
+                            book =>
+                                Number(book.subgenre_id) ===
+                                Number(subgenre.id)
+                        ).length;
+
+
+                    return `
+
+                        <button
+                            type="button"
+
+                            onclick="
+                                openSubgenre(
+                                    ${subgenre.id}
+                                )
+                            "
+
+                            class="
+                                bg-white
+                                border
+                                border-slate-200
+                                rounded-xl
+                                p-4
+                                flex
+                                items-center
+                                justify-between
+                                gap-3
+                                text-left
+                                hover:border-indigo-300
+                                hover:shadow-sm
+                                transition
+                            "
+                        >
+
+                            <div>
+
+                                <h4
+                                    class="
+                                        font-semibold
+                                        text-slate-800
+                                    "
+                                >
+
+                                    ${escapeHtml(subgenre.name)}
+
+                                </h4>
+
+
+                                <p
+                                    class="
+                                        text-xs
+                                        text-slate-500
+                                    "
+                                >
+
+                                    ${count}
+                                    livro(s)
+
+                                </p>
+
+                            </div>
+
+
+                            <i
+                                data-lucide="chevron-right"
+                                class="
+                                    w-5
+                                    h-5
+                                    text-slate-400
+                                "
+                            ></i>
+
+                        </button>
+
+                    `;
+
+                }
+            )
+            .join('');
+
+
+    renderIcons();
+
+}
+
+
+// ============================================================
+// LIVROS DE UM GÊNERO
+// ============================================================
+
+function renderBooksForGenre(genreId) {
+
+    const container =
+        document.getElementById(
+            'genre-books-container'
+        );
+
+
+    if (!container) return;
+
+
+    const genreBooks =
+        books.filter(
+            book =>
+                Number(book.genre_id) ===
+                Number(genreId)
+        );
+
+
+    if (!genreBooks.length) {
+
+        container.innerHTML = `
+
+            <div
+                class="
+                    col-span-full
+                    text-center
+                    text-slate-400
+                    py-10
+                "
+            >
+
+                Nenhum livro cadastrado neste gênero.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        genreBooks
+            .map(
+                book =>
+                    createBookCard(book)
+            )
+            .join('');
+
+}
+
+
+// ============================================================
+// ABRIR SUBGÊNERO
+// ============================================================
+
+function openSubgenre(subgenreId) {
+
+    const subgenre =
+        subgenres.find(
+            item =>
+                Number(item.id) ===
+                Number(subgenreId)
+        );
+
+
+    if (!subgenre) return;
+
+
+    const genre =
+        genres.find(
+            item =>
+                Number(item.id) ===
+                Number(subgenre.genre_id)
+        );
+
+
+    currentLibraryGenreId =
+        Number(subgenre.genre_id);
+
+    currentLibrarySubgenreId =
+        Number(subgenre.id);
+
+
+    document
+        .getElementById('library-home')
+        ?.classList
+        .add('hidden');
+
+
+    document
+        .getElementById('library-genre-view')
+        ?.classList
+        .add('hidden');
+
+
+    document
+        .getElementById('library-subgenre-view')
+        ?.classList
+        .remove('hidden');
+
+
+    const title =
+        document.getElementById(
+            'current-subgenre-title'
+        );
+
+
+    const parent =
+        document.getElementById(
+            'subgenre-parent-name'
+        );
+
+
+    if (title) {
+
+        title.textContent =
+            subgenre.name;
+
+    }
+
+
+    if (parent) {
+
+        parent.textContent =
+            genre?.name || '';
+
+    }
+
+
+    renderBooksForSubgenre(
+        subgenre.id
+    );
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+
+
+    renderIcons();
+
+}
+
+
+// ============================================================
+// LIVROS DO SUBGÊNERO
+// ============================================================
+
+function renderBooksForSubgenre(subgenreId) {
+
+    const container =
+        document.getElementById(
+            'subgenre-books-container'
+        );
+
+
+    if (!container) return;
+
+
+    const filtered =
+        books.filter(
+            book =>
+                Number(book.subgenre_id) ===
+                Number(subgenreId)
+        );
+
+
+    if (!filtered.length) {
+
+        container.innerHTML = `
+
+            <div
+                class="
+                    col-span-full
+                    text-center
+                    text-slate-400
+                    py-10
+                "
+            >
+
+                Nenhum livro cadastrado neste subgênero.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        filtered
+            .map(
+                book =>
+                    createBookCard(book)
+            )
+            .join('');
+
+}
+
+
+// ============================================================
+// VOLTAR PARA BIBLIOTECA
+// ============================================================
+
+function backToLibraryHome() {
+
+    currentLibraryGenreId =
+        null;
+
+    currentLibrarySubgenreId =
+        null;
+
+
+    document
+        .getElementById('library-genre-view')
+        ?.classList
+        .add('hidden');
+
+
+    document
+        .getElementById('library-subgenre-view')
+        ?.classList
+        .add('hidden');
+
+
+    document
+        .getElementById('library-home')
+        ?.classList
+        .remove('hidden');
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+
+
+    renderIcons();
+
+}
+
+
+// ============================================================
+// VOLTAR PARA O GÊNERO ATUAL
+// ============================================================
+
+function backToCurrentGenre() {
+
+    if (!currentLibraryGenreId) {
+
+        backToLibraryHome();
+
+        return;
+
+    }
+
+
+    openGenre(
+        currentLibraryGenreId
+    );
+
+}
+
+
+// ============================================================
+// PESQUISA
+// ============================================================
+
+function handleLibrarySearch() {
+
+    const input =
+        document.getElementById(
+            'lib-search-input'
+        );
+
+
+    const section =
+        document.getElementById(
+            'library-search-section'
+        );
+
+
+    const home =
+        document.getElementById(
+            'library-home'
+        );
+
+
+    const genreView =
+        document.getElementById(
+            'library-genre-view'
+        );
+
+
+    const subgenreView =
+        document.getElementById(
+            'library-subgenre-view'
+        );
+
+
+    const search =
+        (input?.value || '')
+            .trim()
+            .toLowerCase();
+
+
+    if (!search) {
+
+        section?.classList.add(
+            'hidden'
+        );
+
+
+        genreView?.classList.add(
+            'hidden'
+        );
+
+
+        subgenreView?.classList.add(
+            'hidden'
+        );
+
+
+        home?.classList.remove(
+            'hidden'
+        );
+
+
+        return;
+
+    }
+
+
+    home?.classList.add(
+        'hidden'
+    );
+
+
+    genreView?.classList.add(
+        'hidden'
+    );
+
+
+    subgenreView?.classList.add(
+        'hidden'
+    );
+
+
+    section?.classList.remove(
+        'hidden'
+    );
+
+
+    renderLibrarySearchResults();
+
+}
+
+
+// ============================================================
+// RESULTADO DA BUSCA
+// ============================================================
+
+function renderLibrarySearchResults() {
+
+    const container =
+        document.getElementById(
+            'library-search-results'
+        );
+
+
+    const counter =
+        document.getElementById(
+            'library-search-count'
+        );
+
+
+    if (!container) return;
+
+
+    const search =
+        (
+            document
+                .getElementById(
+                    'lib-search-input'
+                )
+                ?.value || ''
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const filterType =
+        document
+            .getElementById(
+                'lib-filter-select'
+            )
+            ?.value || 'all';
+
+
+    const filtered =
+        books.filter(
+            book => {
+
+                const title =
+                    (
+                        book.title || ''
+                    )
+                        .toLowerCase()
+                        .includes(search);
+
+
+                const author =
+                    (
+                        book.author || ''
+                    )
+                        .toLowerCase()
+                        .includes(search);
+
+
+                const description =
+                    (
+                        book.description || ''
+                    )
+                        .toLowerCase()
+                        .includes(search);
+
+
+                if (
+                    filterType ===
+                    'titulo'
+                ) {
+
+                    return title;
+
+                }
+
+
+                if (
+                    filterType ===
+                    'autor'
+                ) {
+
+                    return author;
+
+                }
+
+
+                if (
+                    filterType ===
+                    'descricao'
+                ) {
+
+                    return description;
+
+                }
+
+
+                return (
+                    title ||
+                    author ||
+                    description
+                );
+
+            }
+        );
+
+
+    if (counter) {
+
+        counter.textContent =
+            `${filtered.length} livro(s) encontrado(s)`;
+
+    }
+
+
+    if (!filtered.length) {
+
+        container.innerHTML = `
+
+            <div
+                class="
+                    col-span-full
+                    text-center
+                    text-slate-400
+                    py-12
+                "
+            >
+
+                Nenhum livro corresponde à pesquisa.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        filtered
+            .map(
+                book =>
+                    createBookCard(book)
+            )
+            .join('');
+
+}
+
+
+// ============================================================
+// LIMPAR PESQUISA
+// ============================================================
+
+function clearLibrarySearch() {
+
+    const input =
+        document.getElementById(
+            'lib-search-input'
+        );
+
+
+    if (input) {
+
+        input.value = '';
+
+    }
+
+
+    document
+        .getElementById(
+            'library-search-section'
+        )
+        ?.classList
+        .add('hidden');
+
+
+    backToLibraryHome();
+
+}
+
+
+// ============================================================
+// PAINEL GESTOR - CARREGAR GÊNEROS NO SELECT
+// ============================================================
+
+function renderAdminGenreSelect() {
+
+    const genreSelect =
+        document.getElementById(
+            'admin-book-genre'
+        );
+
+
+    if (!genreSelect) return;
+
+
+    genreSelect.innerHTML = `
+
+        <option value="">
+            Selecione um gênero
+        </option>
+
+        ${
+            genres
+                .map(
+                    genre => `
+
+                        <option
+                            value="${genre.id}"
+                        >
+                            ${escapeHtml(genre.name)}
+                        </option>
+
+                    `
+                )
+                .join('')
+        }
+
+    `;
+
+
+    updateAdminSubgenres();
+
+}
+
+
+// ============================================================
+// PAINEL GESTOR - ALTERAR SUBGÊNEROS
+// ============================================================
+
+function updateAdminSubgenres() {
+
+    const genreSelect =
+        document.getElementById(
+            'admin-book-genre'
+        );
+
+
+    const subgenreSelect =
+        document.getElementById(
+            'admin-book-subgenre'
+        );
+
+
+    if (
+        !genreSelect ||
+        !subgenreSelect
+    ) {
+
+        return;
+
+    }
+
+
+    const genreId =
+        Number(
+            genreSelect.value
+        );
+
+
+    subgenreSelect.innerHTML = `
+
+        <option value="">
+            Nenhum subgênero
+        </option>
+
+    `;
+
+
+    if (!genreId) {
+
+        subgenreSelect.disabled =
+            true;
+
+        return;
+
+    }
+
+
+    const filtered =
+        subgenres.filter(
+            sub =>
+                Number(sub.genre_id) ===
+                genreId
+        );
+
+
+    filtered.forEach(
+        subgenre => {
+
+            const option =
+                document.createElement(
+                    'option'
+                );
+
+
+            option.value =
+                subgenre.id;
+
+
+            option.textContent =
+                subgenre.name;
+
+
+            subgenreSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    subgenreSelect.disabled =
+        false;
+
+}
+
+
+
+
+
+
+
 
 async function loadMyLoans() {
     myLoans = [];
@@ -766,28 +2393,207 @@ function clearArticleForm() {
 }
 
 async function handleCreateBook(e) {
+
     e.preventDefault();
-    if (!isAdmin()) return alert('Ação não autorizada.');
 
-    const title = document.getElementById('admin-book-title').value.trim();
-    const author = document.getElementById('admin-book-author').value.trim();
-    const description = document.getElementById('admin-book-desc').value.trim();
 
-    const { error } = await db.from('books').insert({
-        title,
-        author,
-        description,
-        total_copies: 1,
-        available_copies: 1,
-        active: true
-    });
+    if (!isAdmin()) {
 
-    if (error) return showError('Não foi possível cadastrar o livro', error);
+        alert(
+            'Ação não autorizada.'
+        );
+
+        return;
+
+    }
+
+
+    const title =
+        document
+            .getElementById(
+                'admin-book-title'
+            )
+            .value
+            .trim();
+
+
+    const author =
+        document
+            .getElementById(
+                'admin-book-author'
+            )
+            .value
+            .trim();
+
+
+    const description =
+        document
+            .getElementById(
+                'admin-book-desc'
+            )
+            .value
+            .trim();
+
+
+    const genreValue =
+        document
+            .getElementById(
+                'admin-book-genre'
+            )
+            .value;
+
+
+    const subgenreValue =
+        document
+            .getElementById(
+                'admin-book-subgenre'
+            )
+            .value;
+
+
+    const copies =
+        Number(
+            document
+                .getElementById(
+                    'admin-book-copies'
+                )
+                .value
+        );
+
+
+    // -----------------------------------------
+    // VALIDAÇÕES
+    // -----------------------------------------
+
+    if (!title) {
+
+        alert(
+            'Informe o título do livro.'
+        );
+
+        return;
+
+    }
+
+
+    if (!author) {
+
+        alert(
+            'Informe o autor do livro.'
+        );
+
+        return;
+
+    }
+
+
+    if (!genreValue) {
+
+        alert(
+            'Selecione um gênero.'
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !Number.isInteger(copies) ||
+        copies < 1
+    ) {
+
+        alert(
+            'Informe uma quantidade válida de exemplares.'
+        );
+
+        return;
+
+    }
+
+
+    const genreId =
+        Number(genreValue);
+
+
+    const subgenreId =
+        subgenreValue
+            ? Number(subgenreValue)
+            : null;
+
+
+    // -----------------------------------------
+    // CADASTRAR NO SUPABASE
+    // -----------------------------------------
+
+    const {
+        error
+    } =
+        await db
+            .from('books')
+            .insert({
+
+                title:
+                    title,
+
+                author:
+                    author,
+
+                description:
+                    description || null,
+
+                genre_id:
+                    genreId,
+
+                subgenre_id:
+                    subgenreId,
+
+                total_copies:
+                    copies,
+
+                available_copies:
+                    copies,
+
+                active:
+                    true
+
+            });
+
+
+    if (error) {
+
+        return showError(
+            'Não foi possível cadastrar o livro',
+            error
+        );
+
+    }
+
+
+    // -----------------------------------------
+    // LIMPAR FORMULÁRIO
+    // -----------------------------------------
 
     e.target.reset();
+
+
+    updateAdminSubgenres();
+
+
+    // -----------------------------------------
+    // ATUALIZAR BIBLIOTECA
+    // -----------------------------------------
+
     await loadBooks();
+
+
     renderLibrary();
-    alert('Livro cadastrado com sucesso!');
+
+
+    alert(
+        'Livro cadastrado com sucesso!'
+    );
+
 }
 
 async function markLoanReturned(loanId) {
@@ -902,15 +2708,34 @@ async function initializeApp() {
         switchTab('nova-senha');
     }
 
-    await Promise.all([loadArticles(), loadBooks(), loadPolls()]);
-    if (currentUser) await Promise.all([loadSavedArticles(), loadMyLoans(), loadUserVotes()]);
 
+
+
+    await Promise.all([
+        loadArticles(),
+        loadGenres(),
+        loadSubgenres(),
+        loadBooks(),
+        loadPolls()
+    ]);
+    
+    if (currentUser) {
+        await Promise.all([
+            loadSavedArticles(),
+            loadMyLoans(),
+            loadUserVotes()
+        ]);
+    }
+    
     renderArticles();
     renderLibrary();
     renderMyLoans();
     renderPolls();
+    renderAdminGenreSelect();
     updateAuthUI();
     renderIcons();
+
+
 
     db.auth.onAuthStateChange((event, sessionState) => {
         setTimeout(async () => {
