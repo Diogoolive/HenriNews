@@ -36,7 +36,7 @@ const db = CONFIGURED
 
 
 // ============================================================
-// 2. VARIÁVEIS GERAIS
+// 2. ESTADO GERAL DO SISTEMA
 // ============================================================
 
 let currentUser = null;
@@ -46,6 +46,7 @@ let articles = [];
 let books = [];
 let polls = [];
 let myLoans = [];
+let myHelpQuestions = [];
 
 let genres = [];
 let subgenres = [];
@@ -62,7 +63,7 @@ let currentLibrarySubgenreId = null;
 
 
 // ============================================================
-// 3. FUNÇÕES UTILITÁRIAS
+// 3. UTILITÁRIOS
 // ============================================================
 
 function ensureConfigured() {
@@ -109,7 +110,8 @@ function safeImage(url) {
 
     try {
 
-        const parsed = new URL(url);
+        const parsed =
+            new URL(url);
 
         if (
             parsed.protocol === 'http:' ||
@@ -143,7 +145,11 @@ function formatDate(value) {
         )
     ) {
 
-        const [year, month, day] =
+        const [
+            year,
+            month,
+            day
+        ] =
             String(value)
                 .split('-')
                 .map(Number);
@@ -157,7 +163,8 @@ function formatDate(value) {
 
     } else {
 
-        date = new Date(value);
+        date =
+            new Date(value);
 
     }
 
@@ -166,7 +173,9 @@ function formatDate(value) {
             date.getTime()
         )
     ) {
+
         return escapeHtml(value);
+
     }
 
     return date.toLocaleDateString(
@@ -209,7 +218,10 @@ function redirectUrl() {
 }
 
 
-function showError(context, error) {
+function showError(
+    context,
+    error
+) {
 
     console.error(
         context,
@@ -227,7 +239,7 @@ function showError(context, error) {
 
 
 // ============================================================
-// 4. INTERFACE DE LOGIN
+// 4. INTERFACE DE AUTENTICAÇÃO
 // ============================================================
 
 function updateAuthUI() {
@@ -258,7 +270,9 @@ function updateAuthUI() {
         !actionBtn ||
         !adminBtn
     ) {
+
         return;
+
     }
 
 
@@ -337,12 +351,11 @@ function updateAuthUI() {
 
 
 // ============================================================
-// 5. NAVEGAÇÃO PRINCIPAL
+// 5. NAVEGAÇÃO ENTRE TELAS
 // ============================================================
 
 function switchTab(tabId) {
 
-    // Proteção do painel
     if (
         tabId === 'admin' &&
         !isAdmin()
@@ -352,12 +365,12 @@ function switchTab(tabId) {
             'Área exclusiva para gestores autorizados.'
         );
 
-        tabId = 'feed';
+        tabId =
+            'feed';
 
     }
 
 
-    // Esconder telas
     document
         .querySelectorAll(
             '.tab-content'
@@ -373,7 +386,6 @@ function switchTab(tabId) {
         );
 
 
-    // Mostrar tela escolhida
     const target =
         document.getElementById(
             `tab-${tabId}`
@@ -389,7 +401,7 @@ function switchTab(tabId) {
     }
 
 
-    // Feed
+    // FEED
     if (
         tabId === 'feed'
     ) {
@@ -399,7 +411,7 @@ function switchTab(tabId) {
     }
 
 
-    // Biblioteca
+    // BIBLIOTECA
     if (
         tabId === 'biblioteca'
     ) {
@@ -409,17 +421,19 @@ function switchTab(tabId) {
                 'lib-search-input'
             );
 
+
         if (searchInput) {
-            searchInput.value = '';
+
+            searchInput.value =
+                '';
+
         }
 
 
-        const searchSection =
-            document.getElementById(
+        document
+            .getElementById(
                 'library-search-section'
-            );
-
-        searchSection
+            )
             ?.classList
             .add('hidden');
 
@@ -456,12 +470,13 @@ function switchTab(tabId) {
 
 
         renderLibrary();
+
         renderMyLoans();
 
     }
 
 
-    // Enquetes
+    // ENQUETES
     if (
         tabId === 'enquetes'
     ) {
@@ -471,7 +486,7 @@ function switchTab(tabId) {
     }
 
 
-    // Gestor
+    // PAINEL GESTOR
     if (
         tabId === 'admin'
     ) {
@@ -487,7 +502,7 @@ function switchTab(tabId) {
     }
 
 
-    // Ajuda
+    // AJUDA
     if (
         tabId === 'ajuda'
     ) {
@@ -509,10 +524,12 @@ function switchTab(tabId) {
 
 
 // ============================================================
-// 6. PERFIL DO USUÁRIO
+// 6. PERFIL
 // ============================================================
 
-async function loadProfile(userId) {
+async function loadProfile(
+    userId
+) {
 
     if (
         !db ||
@@ -557,10 +574,13 @@ async function loadProfile(userId) {
 }
 
 
-async function syncCurrentUser(user) {
+async function syncCurrentUser(
+    user
+) {
 
     currentUser =
-        user || null;
+        user ||
+        null;
 
 
     currentProfile =
@@ -607,13 +627,18 @@ async function syncCurrentUser(user) {
     await Promise.all([
         loadSavedArticles(),
         loadMyLoans(),
-        loadUserVotes()
+        loadUserVotes(),
+        loadMyHelpQuestions()
     ]);
 
 
     renderArticles();
+
     renderMyLoans();
+
     renderPolls();
+
+    renderMyHelpQuestions();
 
 }
 
@@ -625,6 +650,7 @@ async function syncCurrentUser(user) {
 async function handleRegister(e) {
 
     e.preventDefault();
+
 
     if (!ensureConfigured()) {
         return;
@@ -674,7 +700,8 @@ async function handleRegister(e) {
     const options = {
 
         data: {
-            full_name: name
+            full_name:
+                name
         }
 
     };
@@ -758,6 +785,7 @@ async function handleLogin(e) {
 
     e.preventDefault();
 
+
     if (!ensureConfigured()) {
         return;
     }
@@ -824,7 +852,7 @@ async function handleLogin(e) {
 
 async function handleLogout() {
 
-    if (!db) {
+    if (!ensureConfigured()) {
         return;
     }
 
@@ -847,8 +875,11 @@ async function handleLogout() {
     }
 
 
-    currentUser = null;
-    currentProfile = null;
+    currentUser =
+        null;
+
+    currentProfile =
+        null;
 
     savedArticleIds =
         new Set();
@@ -856,13 +887,20 @@ async function handleLogout() {
     userVotes =
         new Map();
 
-    myLoans = [];
+    myLoans =
+        [];
+
+    myHelpQuestions =
+        [];
 
 
     updateAuthUI();
+
     renderArticles();
+
     renderMyLoans();
-    renderPolls();
+
+    renderMyHelpQuestions();
 
 
     switchTab(
@@ -879,6 +917,7 @@ async function handleLogout() {
 async function handleRecoverPassword(e) {
 
     e.preventDefault();
+
 
     if (!ensureConfigured()) {
         return;
@@ -947,12 +986,13 @@ async function handleRecoverPassword(e) {
 
 
 // ============================================================
-// 11. DEFINIR NOVA SENHA
+// 11. NOVA SENHA
 // ============================================================
 
 async function handleUpdatePassword(e) {
 
     e.preventDefault();
+
 
     if (!ensureConfigured()) {
         return;
@@ -1039,15 +1079,18 @@ async function handleUpdatePassword(e) {
         .signOut();
 
 
-    currentUser = null;
-    currentProfile = null;
+    currentUser =
+        null;
+
+    currentProfile =
+        null;
 
 
     updateAuthUI();
 
 
     alert(
-        'Senha alterada com sucesso! Agora entre usando a nova senha.'
+        'Senha alterada com sucesso! Agora entre com sua nova senha.'
     );
 
 
@@ -1059,7 +1102,7 @@ async function handleUpdatePassword(e) {
 
 
 // ============================================================
-// 12. CARREGAR NOTÍCIAS
+// 12. CARREGAR ARTIGOS
 // ============================================================
 
 async function loadArticles() {
@@ -1075,13 +1118,9 @@ async function loadArticles() {
     } =
         await db
             .from('articles')
-            .select(`
-                id,
-                title,
-                content,
-                image_url,
-                created_at
-            `)
+            .select(
+                'id, title, content, image_url, created_at'
+            )
             .eq(
                 'status',
                 'published'
@@ -1089,7 +1128,8 @@ async function loadArticles() {
             .order(
                 'created_at',
                 {
-                    ascending: false
+                    ascending:
+                        false
                 }
             );
 
@@ -1107,7 +1147,8 @@ async function loadArticles() {
 
 
     articles =
-        data || [];
+        data ||
+        [];
 
 }
 
@@ -1152,7 +1193,8 @@ async function loadSavedArticles() {
     if (!error) {
 
         (
-            data || []
+            data ||
+            []
         )
             .forEach(
                 item => {
@@ -1171,7 +1213,7 @@ async function loadSavedArticles() {
 
 
 // ============================================================
-// 14. MOSTRAR NOTÍCIAS
+// 14. MOSTRAR ARTIGOS
 // ============================================================
 
 function renderArticles() {
@@ -1187,7 +1229,8 @@ function renderArticles() {
     }
 
 
-    container.innerHTML = '';
+    container.innerHTML =
+        '';
 
 
     let filtered =
@@ -1255,148 +1298,149 @@ function renderArticles() {
     }
 
 
-    filtered
-        .forEach(
-            article => {
+    filtered.forEach(
+        article => {
 
-                const description =
-                    article.content.length > 115
-                        ? `${article.content.substring(0, 115)}...`
-                        : article.content;
-
-
-                const card =
-                    document.createElement(
-                        'div'
-                    );
+            const description =
+                article.content.length > 115
+                    ? `${
+                        article.content.substring(
+                            0,
+                            115
+                        )
+                    }...`
+                    : article.content;
 
 
-                card.className =
-                    'bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition';
+            const card =
+                document.createElement(
+                    'div'
+                );
 
 
-                card.innerHTML = `
+            card.className =
+                'bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition';
 
-                    <img
-                        src="${safeImage(article.image_url)}"
-                        class="h-48 w-full object-cover"
-                        alt="Capa da notícia"
-                    >
+
+            card.innerHTML = `
+
+                <img
+                    src="${safeImage(article.image_url)}"
+                    class="h-48 w-full object-cover"
+                    alt="Capa da notícia"
+                >
+
+
+                <div
+                    class="
+                        p-5
+                        flex-grow
+                        flex
+                        flex-col
+                        justify-between
+                        space-y-4
+                    "
+                >
+
+                    <div class="space-y-2">
+
+                        <h3
+                            class="
+                                font-bold
+                                text-lg
+                                text-slate-900
+                                leading-tight
+                            "
+                        >
+                            ${escapeHtml(article.title)}
+                        </h3>
+
+
+                        <p
+                            class="
+                                text-xs
+                                text-slate-500
+                                leading-relaxed
+                            "
+                        >
+                            ${escapeHtml(description)}
+                        </p>
+
+                    </div>
 
 
                     <div
                         class="
-                            p-5
-                            flex-grow
                             flex
-                            flex-col
+                            items-center
                             justify-between
-                            space-y-4
+                            pt-2
+                            border-t
+                            text-sm
                         "
                     >
 
-                        <div class="space-y-2">
-
-                            <h3
-                                class="
-                                    font-bold
-                                    text-lg
-                                    text-slate-900
-                                    leading-tight
-                                "
-                            >
-                                ${escapeHtml(article.title)}
-                            </h3>
-
-
-                            <p
-                                class="
-                                    text-xs
-                                    text-slate-500
-                                    leading-relaxed
-                                "
-                            >
-                                ${escapeHtml(description)}
-                            </p>
-
-                        </div>
-
-
-                        <div
+                        <button
+                            type="button"
+                            onclick="viewArticleDetail(${article.id})"
                             class="
+                                text-indigo-600
+                                font-semibold
+                                hover:text-indigo-700
                                 flex
                                 items-center
-                                justify-between
-                                pt-2
-                                border-t
-                                text-sm
+                                gap-1
+                            "
+                        >
+                            Ler notícia completa
+
+                            <i
+                                data-lucide="arrow-right"
+                                class="w-4 h-4"
+                            ></i>
+                        </button>
+
+
+                        <button
+                            type="button"
+                            onclick="toggleSaveArticle(${article.id})"
+                            class="
+                                ${
+                                    savedArticleIds.has(article.id)
+                                        ? 'text-amber-500'
+                                        : 'text-slate-400 hover:text-slate-600'
+                                }
                             "
                         >
 
-                            <button
-                                type="button"
-                                onclick="viewArticleDetail(${article.id})"
+                            <i
+                                data-lucide="bookmark"
                                 class="
-                                    text-indigo-600
-                                    font-semibold
-                                    hover:text-indigo-700
-                                    flex
-                                    items-center
-                                    gap-1
-                                "
-                            >
-
-                                Ler notícia completa
-
-                                <i
-                                    data-lucide="arrow-right"
-                                    class="w-4 h-4"
-                                ></i>
-
-                            </button>
-
-
-                            <button
-                                type="button"
-                                onclick="toggleSaveArticle(${article.id})"
-                                class="
+                                    w-5
+                                    h-5
                                     ${
                                         savedArticleIds.has(article.id)
-                                            ? 'text-amber-500'
-                                            : 'text-slate-400 hover:text-slate-600'
+                                            ? 'fill-current'
+                                            : ''
                                     }
                                 "
-                                title="Salvar para ler depois"
-                            >
+                            ></i>
 
-                                <i
-                                    data-lucide="bookmark"
-                                    class="
-                                        w-5
-                                        h-5
-                                        ${
-                                            savedArticleIds.has(article.id)
-                                                ? 'fill-current'
-                                                : ''
-                                        }
-                                    "
-                                ></i>
-
-                            </button>
-
-                        </div>
+                        </button>
 
                     </div>
-                `;
+
+                </div>
+            `;
 
 
-                container
-                    .appendChild(
-                        card
-                    );
+            container
+                .appendChild(
+                    card
+                );
 
-            }
-        );
+        }
+    );
 
 
     renderIcons();
@@ -1415,7 +1459,7 @@ function filterArticles(type) {
 
 
 // ============================================================
-// 15. DETALHE DA NOTÍCIA
+// 15. DETALHE DO ARTIGO
 // ============================================================
 
 function viewArticleDetail(id) {
@@ -1453,8 +1497,6 @@ function viewArticleDetail(id) {
                     md:text-4xl
                     font-extrabold
                     text-slate-900
-                    tracking-tight
-                    leading-tight
                 "
             >
                 ${escapeHtml(article.title)}
@@ -1468,9 +1510,7 @@ function viewArticleDetail(id) {
                     h-96
                     object-cover
                     rounded-2xl
-                    shadow-sm
                 "
-                alt="Capa da notícia"
             >
 
 
@@ -1478,7 +1518,6 @@ function viewArticleDetail(id) {
                 class="
                     text-slate-700
                     leading-relaxed
-                    text-base
                     whitespace-pre-line
                 "
             >
@@ -1497,7 +1536,7 @@ function viewArticleDetail(id) {
 
 
 // ============================================================
-// 16. SALVAR ARTIGO PARA LER DEPOIS
+// 16. SALVAR ARTIGO
 // ============================================================
 
 async function toggleSaveArticle(id) {
@@ -1514,11 +1553,6 @@ async function toggleSaveArticle(id) {
 
         return;
 
-    }
-
-
-    if (!ensureConfigured()) {
-        return;
     }
 
 
@@ -1547,14 +1581,15 @@ async function toggleSaveArticle(id) {
         if (error) {
 
             return showError(
-                'Não foi possível remover o artigo dos salvos',
+                'Não foi possível remover o artigo',
                 error
             );
 
         }
 
 
-        savedArticleIds.delete(id);
+        savedArticleIds
+            .delete(id);
 
     } else {
 
@@ -1586,7 +1621,8 @@ async function toggleSaveArticle(id) {
         }
 
 
-        savedArticleIds.add(id);
+        savedArticleIds
+            .add(id);
 
     }
 
@@ -1597,7 +1633,7 @@ async function toggleSaveArticle(id) {
 
 
 // ============================================================
-// 17. CARREGAR GÊNEROS
+// 17. GÊNEROS
 // ============================================================
 
 async function loadGenres() {
@@ -1619,7 +1655,8 @@ async function loadGenres() {
             .order(
                 'name',
                 {
-                    ascending: true
+                    ascending:
+                        true
                 }
             );
 
@@ -1637,13 +1674,14 @@ async function loadGenres() {
 
 
     genres =
-        data || [];
+        data ||
+        [];
 
 }
 
 
 // ============================================================
-// 18. CARREGAR SUBGÊNEROS
+// 18. SUBGÊNEROS
 // ============================================================
 
 async function loadSubgenres() {
@@ -1665,7 +1703,8 @@ async function loadSubgenres() {
             .order(
                 'name',
                 {
-                    ascending: true
+                    ascending:
+                        true
                 }
             );
 
@@ -1683,13 +1722,14 @@ async function loadSubgenres() {
 
 
     subgenres =
-        data || [];
+        data ||
+        [];
 
 }
 
 
 // ============================================================
-// 19. CARREGAR LIVROS
+// 19. LIVROS
 // ============================================================
 
 async function loadBooks() {
@@ -1724,7 +1764,8 @@ async function loadBooks() {
             .order(
                 'created_at',
                 {
-                    ascending: false
+                    ascending:
+                        false
                 }
             );
 
@@ -1742,7 +1783,8 @@ async function loadBooks() {
 
 
     books =
-        data || [];
+        data ||
+        [];
 
 }
 
@@ -1792,8 +1834,6 @@ function createBookCard(
                 flex-col
                 justify-between
                 gap-4
-                hover:shadow-md
-                transition
                 ${extraClasses}
             "
         >
@@ -1804,7 +1844,6 @@ function createBookCard(
                     class="
                         flex
                         flex-wrap
-                        items-center
                         gap-2
                     "
                 >
@@ -1817,10 +1856,11 @@ function createBookCard(
                             px-2
                             py-1
                             rounded
+
                             ${
                                 available
-                                    ? 'text-emerald-700 bg-emerald-50'
-                                    : 'text-rose-700 bg-rose-50'
+                                    ? 'bg-emerald-50 text-emerald-700'
+                                    : 'bg-rose-50 text-rose-700'
                             }
                         "
                     >
@@ -1845,7 +1885,6 @@ function createBookCard(
                                         px-2
                                         py-1
                                         rounded
-                                        font-semibold
                                     "
                                 >
                                     ${escapeHtml(genre.name)}
@@ -1860,9 +1899,7 @@ function createBookCard(
                 <h3
                     class="
                         font-bold
-                        text-base
                         text-slate-900
-                        leading-snug
                     "
                 >
                     ${escapeHtml(book.title)}
@@ -1873,7 +1910,6 @@ function createBookCard(
                     class="
                         text-xs
                         text-slate-500
-                        font-medium
                     "
                 >
                     Por:
@@ -1888,7 +1924,6 @@ function createBookCard(
                                 class="
                                     text-xs
                                     text-indigo-600
-                                    font-medium
                                 "
                             >
                                 ${escapeHtml(subgenre.name)}
@@ -1905,8 +1940,6 @@ function createBookCard(
                                 class="
                                     text-xs
                                     text-slate-600
-                                    leading-relaxed
-                                    pt-1
                                 "
                             >
                                 ${escapeHtml(book.description)}
@@ -1927,11 +1960,10 @@ function createBookCard(
                     bg-slate-900
                     hover:bg-slate-800
                     text-white
-                    font-medium
                     py-2
                     rounded-lg
                     text-xs
-                    transition
+                    font-medium
                 "
             >
 
@@ -1950,19 +1982,20 @@ function createBookCard(
 
 
 // ============================================================
-// 21. RENDERIZAR BIBLIOTECA
+// 21. BIBLIOTECA
 // ============================================================
 
 function renderLibrary() {
 
     renderNewBooks();
+
     renderGenres();
 
 }
 
 
 // ============================================================
-// 22. LIVROS NOVOS
+// 22. NOVOS LIVROS
 // ============================================================
 
 function renderNewBooks() {
@@ -1978,12 +2011,19 @@ function renderNewBooks() {
     }
 
 
-    const recentBooks =
+    const recent =
         [...books]
             .sort(
-                (a, b) =>
-                    new Date(b.created_at) -
-                    new Date(a.created_at)
+                (
+                    a,
+                    b
+                ) =>
+                    new Date(
+                        b.created_at
+                    ) -
+                    new Date(
+                        a.created_at
+                    )
             )
             .slice(
                 0,
@@ -1992,19 +2032,18 @@ function renderNewBooks() {
 
 
     if (
-        !recentBooks.length
+        !recent.length
     ) {
 
         container.innerHTML = `
-            <div
+            <p
                 class="
-                    text-sm
                     text-slate-400
                     py-8
                 "
             >
-                Nenhum livro cadastrado ainda.
-            </div>
+                Nenhum livro cadastrado.
+            </p>
         `;
 
         return;
@@ -2013,12 +2052,12 @@ function renderNewBooks() {
 
 
     container.innerHTML =
-        recentBooks
+        recent
             .map(
                 book =>
                     createBookCard(
                         book,
-                        'min-w-[260px] max-w-[260px] snap-start'
+                        'min-w-[260px] max-w-[260px]'
                     )
             )
             .join('');
@@ -2027,7 +2066,7 @@ function renderNewBooks() {
 
 
 // ============================================================
-// 23. GÊNEROS
+// 23. LISTAR GÊNEROS
 // ============================================================
 
 function renderGenres() {
@@ -2043,21 +2082,17 @@ function renderGenres() {
     }
 
 
-    if (
-        !genres.length
-    ) {
+    if (!genres.length) {
 
         container.innerHTML = `
-            <div
+            <p
                 class="
                     col-span-full
-                    text-center
                     text-slate-400
-                    py-8
                 "
             >
                 Nenhum gênero cadastrado.
-            </div>
+            </p>
         `;
 
         return;
@@ -2078,10 +2113,10 @@ function renderGenres() {
                         ).length;
 
 
-                    const subgenreCount =
+                    const subCount =
                         subgenres.filter(
-                            item =>
-                                Number(item.genre_id) ===
+                            sub =>
+                                Number(sub.genre_id) ===
                                 Number(genre.id)
                         ).length;
 
@@ -2099,90 +2134,50 @@ function renderGenres() {
                                 p-5
                                 text-left
                                 shadow-sm
-                                hover:shadow-md
                                 hover:border-indigo-300
-                                transition
-                                group
                             "
                         >
 
-                            <div
+                            <i
+                                data-lucide="book-open"
                                 class="
-                                    flex
-                                    justify-between
-                                    items-start
-                                    gap-3
+                                    w-6
+                                    h-6
+                                    text-indigo-600
+                                    mb-3
+                                "
+                            ></i>
+
+
+                            <h3
+                                class="
+                                    font-bold
+                                    text-slate-900
                                 "
                             >
-
-                                <div>
-
-                                    <div
-                                        class="
-                                            w-10
-                                            h-10
-                                            rounded-lg
-                                            bg-indigo-100
-                                            text-indigo-600
-                                            flex
-                                            items-center
-                                            justify-center
-                                            mb-3
-                                        "
-                                    >
-
-                                        <i
-                                            data-lucide="book-open"
-                                            class="w-5 h-5"
-                                        ></i>
-
-                                    </div>
+                                ${escapeHtml(genre.name)}
+                            </h3>
 
 
-                                    <h3
-                                        class="
-                                            font-bold
-                                            text-slate-900
-                                            group-hover:text-indigo-600
-                                        "
-                                    >
-                                        ${escapeHtml(genre.name)}
-                                    </h3>
+                            <p
+                                class="
+                                    text-xs
+                                    text-slate-500
+                                    mt-1
+                                "
+                            >
+                                ${bookCount} livro(s)
+                            </p>
 
 
-                                    <p
-                                        class="
-                                            text-xs
-                                            text-slate-500
-                                            mt-1
-                                        "
-                                    >
-                                        ${bookCount} livro(s)
-                                    </p>
-
-
-                                    <p
-                                        class="
-                                            text-xs
-                                            text-slate-400
-                                        "
-                                    >
-                                        ${subgenreCount} subgênero(s)
-                                    </p>
-
-                                </div>
-
-
-                                <i
-                                    data-lucide="chevron-right"
-                                    class="
-                                        w-5
-                                        h-5
-                                        text-slate-300
-                                    "
-                                ></i>
-
-                            </div>
+                            <p
+                                class="
+                                    text-xs
+                                    text-slate-400
+                                "
+                            >
+                                ${subCount} subgênero(s)
+                            </p>
 
                         </button>
                     `;
@@ -2201,7 +2196,9 @@ function renderGenres() {
 // 24. ABRIR GÊNERO
 // ============================================================
 
-function openGenre(genreId) {
+function openGenre(
+    genreId
+) {
 
     const genre =
         genres.find(
@@ -2217,7 +2214,9 @@ function openGenre(genreId) {
 
 
     currentLibraryGenreId =
-        Number(genreId);
+        Number(
+            genreId
+        );
 
     currentLibrarySubgenreId =
         null;
@@ -2262,12 +2261,12 @@ function openGenre(genreId) {
 
 
     renderSubgenresForGenre(
-        genre.id
+        genreId
     );
 
 
     renderBooksForGenre(
-        genre.id
+        genreId
     );
 
 
@@ -2277,7 +2276,7 @@ function openGenre(genreId) {
 
 
 // ============================================================
-// 25. SUBGÊNEROS DE UM GÊNERO
+// 25. SUBGÊNEROS
 // ============================================================
 
 function renderSubgenresForGenre(
@@ -2303,17 +2302,15 @@ function renderSubgenresForGenre(
         );
 
 
-    if (
-        !filtered.length
-    ) {
+    if (!filtered.length) {
 
         container.innerHTML = `
             <div
                 class="
                     col-span-full
                     bg-slate-50
-                    p-5
                     rounded-xl
+                    p-5
                     text-sm
                     text-slate-500
                 "
@@ -2330,13 +2327,13 @@ function renderSubgenresForGenre(
     container.innerHTML =
         filtered
             .map(
-                subgenre => {
+                sub => {
 
                     const count =
                         books.filter(
                             book =>
                                 Number(book.subgenre_id) ===
-                                Number(subgenre.id)
+                                Number(sub.id)
                         ).length;
 
 
@@ -2344,56 +2341,35 @@ function renderSubgenresForGenre(
 
                         <button
                             type="button"
-                            onclick="openSubgenre(${subgenre.id})"
+                            onclick="openSubgenre(${sub.id})"
                             class="
                                 bg-white
                                 border
                                 border-slate-200
                                 rounded-xl
                                 p-4
-                                flex
-                                items-center
-                                justify-between
-                                gap-3
                                 text-left
-                                hover:border-indigo-300
-                                hover:shadow-sm
-                                transition
                             "
                         >
 
-                            <div>
-
-                                <h4
-                                    class="
-                                        font-semibold
-                                        text-slate-800
-                                    "
-                                >
-                                    ${escapeHtml(subgenre.name)}
-                                </h4>
-
-
-                                <p
-                                    class="
-                                        text-xs
-                                        text-slate-500
-                                    "
-                                >
-                                    ${count} livro(s)
-                                </p>
-
-                            </div>
-
-
-                            <i
-                                data-lucide="chevron-right"
+                            <h4
                                 class="
-                                    w-5
-                                    h-5
-                                    text-slate-400
+                                    font-semibold
+                                    text-slate-800
                                 "
-                            ></i>
+                            >
+                                ${escapeHtml(sub.name)}
+                            </h4>
+
+
+                            <p
+                                class="
+                                    text-xs
+                                    text-slate-500
+                                "
+                            >
+                                ${count} livro(s)
+                            </p>
 
                         </button>
                     `;
@@ -2435,12 +2411,10 @@ function renderBooksForGenre(
         );
 
 
-    if (
-        !filtered.length
-    ) {
+    if (!filtered.length) {
 
         container.innerHTML = `
-            <div
+            <p
                 class="
                     col-span-full
                     text-center
@@ -2448,8 +2422,8 @@ function renderBooksForGenre(
                     py-10
                 "
             >
-                Nenhum livro cadastrado neste gênero.
-            </div>
+                Nenhum livro neste gênero.
+            </p>
         `;
 
         return;
@@ -2461,7 +2435,9 @@ function renderBooksForGenre(
         filtered
             .map(
                 book =>
-                    createBookCard(book)
+                    createBookCard(
+                        book
+                    )
             )
             .join('');
 
@@ -2476,7 +2452,7 @@ function openSubgenre(
     subgenreId
 ) {
 
-    const subgenre =
+    const sub =
         subgenres.find(
             item =>
                 Number(item.id) ===
@@ -2484,7 +2460,7 @@ function openSubgenre(
         );
 
 
-    if (!subgenre) {
+    if (!sub) {
         return;
     }
 
@@ -2493,18 +2469,18 @@ function openSubgenre(
         genres.find(
             item =>
                 Number(item.id) ===
-                Number(subgenre.genre_id)
+                Number(sub.genre_id)
         );
 
 
     currentLibraryGenreId =
         Number(
-            subgenre.genre_id
+            sub.genre_id
         );
 
     currentLibrarySubgenreId =
         Number(
-            subgenre.id
+            sub.id
         );
 
 
@@ -2547,7 +2523,7 @@ function openSubgenre(
     if (title) {
 
         title.textContent =
-            subgenre.name;
+            sub.name;
 
     }
 
@@ -2555,13 +2531,14 @@ function openSubgenre(
     if (parent) {
 
         parent.textContent =
-            genre?.name || '';
+            genre?.name ||
+            '';
 
     }
 
 
     renderBooksForSubgenre(
-        subgenre.id
+        sub.id
     );
 
 
@@ -2597,41 +2574,34 @@ function renderBooksForSubgenre(
         );
 
 
-    if (
-        !filtered.length
-    ) {
-
-        container.innerHTML = `
-            <div
-                class="
-                    col-span-full
-                    text-center
-                    text-slate-400
-                    py-10
-                "
-            >
-                Nenhum livro cadastrado neste subgênero.
-            </div>
-        `;
-
-        return;
-
-    }
-
-
     container.innerHTML =
-        filtered
-            .map(
-                book =>
-                    createBookCard(book)
-            )
-            .join('');
+        filtered.length
+            ? filtered
+                .map(
+                    book =>
+                        createBookCard(
+                            book
+                        )
+                )
+                .join('')
+            : `
+                <p
+                    class="
+                        col-span-full
+                        text-center
+                        text-slate-400
+                        py-10
+                    "
+                >
+                    Nenhum livro neste subgênero.
+                </p>
+            `;
 
 }
 
 
 // ============================================================
-// 29. VOLTAR PARA BIBLIOTECA
+// 29. VOLTAR
 // ============================================================
 
 function backToLibraryHome() {
@@ -2674,9 +2644,7 @@ function backToLibraryHome() {
 
 function backToCurrentGenre() {
 
-    if (
-        !currentLibraryGenreId
-    ) {
+    if (!currentLibraryGenreId) {
 
         backToLibraryHome();
 
@@ -2706,7 +2674,8 @@ function handleLibrarySearch() {
 
     const search =
         (
-            input?.value || ''
+            input?.value ||
+            ''
         )
             .trim()
             .toLowerCase();
@@ -2718,24 +2687,6 @@ function handleLibrarySearch() {
         );
 
 
-    const home =
-        document.getElementById(
-            'library-home'
-        );
-
-
-    const genreView =
-        document.getElementById(
-            'library-genre-view'
-        );
-
-
-    const subgenreView =
-        document.getElementById(
-            'library-subgenre-view'
-        );
-
-
     if (!search) {
 
         searchSection
@@ -2743,17 +2694,10 @@ function handleLibrarySearch() {
             .add('hidden');
 
 
-        genreView
-            ?.classList
-            .add('hidden');
-
-
-        subgenreView
-            ?.classList
-            .add('hidden');
-
-
-        home
+        document
+            .getElementById(
+                'library-home'
+            )
             ?.classList
             .remove('hidden');
 
@@ -2763,17 +2707,26 @@ function handleLibrarySearch() {
     }
 
 
-    home
+    document
+        .getElementById(
+            'library-home'
+        )
         ?.classList
         .add('hidden');
 
 
-    genreView
+    document
+        .getElementById(
+            'library-genre-view'
+        )
         ?.classList
         .add('hidden');
 
 
-    subgenreView
+    document
+        .getElementById(
+            'library-subgenre-view'
+        )
         ?.classList
         .add('hidden');
 
@@ -2813,13 +2766,14 @@ function renderLibrarySearchResults() {
                 .getElementById(
                     'lib-search-input'
                 )
-                ?.value || ''
+                ?.value ||
+            ''
         )
             .trim()
             .toLowerCase();
 
 
-    const filterType =
+    const filter =
         document
             .getElementById(
                 'lib-filter-select'
@@ -2834,30 +2788,39 @@ function renderLibrarySearchResults() {
 
                 const title =
                     (
-                        book.title || ''
+                        book.title ||
+                        ''
                     )
                         .toLowerCase()
-                        .includes(search);
+                        .includes(
+                            search
+                        );
 
 
                 const author =
                     (
-                        book.author || ''
+                        book.author ||
+                        ''
                     )
                         .toLowerCase()
-                        .includes(search);
+                        .includes(
+                            search
+                        );
 
 
                 const description =
                     (
-                        book.description || ''
+                        book.description ||
+                        ''
                     )
                         .toLowerCase()
-                        .includes(search);
+                        .includes(
+                            search
+                        );
 
 
                 if (
-                    filterType === 'titulo'
+                    filter === 'titulo'
                 ) {
 
                     return title;
@@ -2866,7 +2829,7 @@ function renderLibrarySearchResults() {
 
 
                 if (
-                    filterType === 'autor'
+                    filter === 'autor'
                 ) {
 
                     return author;
@@ -2875,7 +2838,7 @@ function renderLibrarySearchResults() {
 
 
                 if (
-                    filterType === 'descricao'
+                    filter === 'descricao'
                 ) {
 
                     return description;
@@ -2901,35 +2864,28 @@ function renderLibrarySearchResults() {
     }
 
 
-    if (
-        !filtered.length
-    ) {
-
-        container.innerHTML = `
-            <div
-                class="
-                    col-span-full
-                    text-center
-                    text-slate-400
-                    py-12
-                "
-            >
-                Nenhum livro corresponde à pesquisa.
-            </div>
-        `;
-
-        return;
-
-    }
-
-
     container.innerHTML =
-        filtered
-            .map(
-                book =>
-                    createBookCard(book)
-            )
-            .join('');
+        filtered.length
+            ? filtered
+                .map(
+                    book =>
+                        createBookCard(
+                            book
+                        )
+                )
+                .join('')
+            : `
+                <p
+                    class="
+                        col-span-full
+                        text-center
+                        text-slate-400
+                        py-10
+                    "
+                >
+                    Nenhum livro encontrado.
+                </p>
+            `;
 
 }
 
@@ -2944,7 +2900,8 @@ function clearLibrarySearch() {
 
     if (input) {
 
-        input.value = '';
+        input.value =
+            '';
 
     }
 
@@ -2963,27 +2920,27 @@ function clearLibrarySearch() {
 
 
 // ============================================================
-// 31. SELECT DE GÊNEROS NO PAINEL
+// 31. SELECT DE GÊNEROS DO ADMIN
 // ============================================================
 
 function renderAdminGenreSelect() {
 
-    const genreSelect =
+    const select =
         document.getElementById(
             'admin-book-genre'
         );
 
 
-    if (!genreSelect) {
+    if (!select) {
         return;
     }
 
 
-    const previousValue =
-        genreSelect.value;
+    const current =
+        select.value;
 
 
-    genreSelect.innerHTML = `
+    select.innerHTML = `
 
         <option value="">
             Selecione um gênero
@@ -2993,7 +2950,9 @@ function renderAdminGenreSelect() {
             genres
                 .map(
                     genre => `
-                        <option value="${genre.id}">
+                        <option
+                            value="${genre.id}"
+                        >
                             ${escapeHtml(genre.name)}
                         </option>
                     `
@@ -3004,16 +2963,16 @@ function renderAdminGenreSelect() {
 
 
     if (
-        previousValue &&
+        current &&
         genres.some(
-            genre =>
-                String(genre.id) ===
-                String(previousValue)
+            item =>
+                String(item.id) ===
+                String(current)
         )
     ) {
 
-        genreSelect.value =
-            previousValue;
+        select.value =
+            current;
 
     }
 
@@ -3023,10 +2982,6 @@ function renderAdminGenreSelect() {
 }
 
 
-// ============================================================
-// 32. SUBGÊNEROS NO PAINEL
-// ============================================================
-
 function updateAdminSubgenres() {
 
     const genreSelect =
@@ -3035,7 +2990,7 @@ function updateAdminSubgenres() {
         );
 
 
-    const subgenreSelect =
+    const subSelect =
         document.getElementById(
             'admin-book-subgenre'
         );
@@ -3043,7 +2998,7 @@ function updateAdminSubgenres() {
 
     if (
         !genreSelect ||
-        !subgenreSelect
+        !subSelect
     ) {
 
         return;
@@ -3057,8 +3012,7 @@ function updateAdminSubgenres() {
         );
 
 
-    subgenreSelect.innerHTML = `
-
+    subSelect.innerHTML = `
         <option value="">
             Nenhum subgênero
         </option>
@@ -3067,7 +3021,7 @@ function updateAdminSubgenres() {
 
     if (!genreId) {
 
-        subgenreSelect.disabled =
+        subSelect.disabled =
             true;
 
         return;
@@ -3075,53 +3029,52 @@ function updateAdminSubgenres() {
     }
 
 
-    const filtered =
-        subgenres.filter(
-            item =>
-                Number(item.genre_id) ===
+    subgenres
+        .filter(
+            sub =>
+                Number(sub.genre_id) ===
                 genreId
+        )
+        .forEach(
+            sub => {
+
+                const option =
+                    document.createElement(
+                        'option'
+                    );
+
+
+                option.value =
+                    sub.id;
+
+
+                option.textContent =
+                    sub.name;
+
+
+                subSelect
+                    .appendChild(
+                        option
+                    );
+
+            }
         );
 
 
-    filtered.forEach(
-        subgenre => {
-
-            const option =
-                document.createElement(
-                    'option'
-                );
-
-
-            option.value =
-                subgenre.id;
-
-
-            option.textContent =
-                subgenre.name;
-
-
-            subgenreSelect
-                .appendChild(
-                    option
-                );
-
-        }
-    );
-
-
-    subgenreSelect.disabled =
+    subSelect.disabled =
         false;
 
 }
 
 
 // ============================================================
-// 33. CARREGAR EMPRÉSTIMOS DO USUÁRIO
+// 32. EMPRÉSTIMOS DO USUÁRIO
 // ============================================================
 
 async function loadMyLoans() {
 
-    myLoans = [];
+    myLoans =
+        [];
 
 
     if (
@@ -3159,7 +3112,8 @@ async function loadMyLoans() {
             .order(
                 'requested_at',
                 {
-                    ascending: false
+                    ascending:
+                        false
                 }
             );
 
@@ -3177,7 +3131,8 @@ async function loadMyLoans() {
 
 
     myLoans =
-        data || [];
+        data ||
+        [];
 
 }
 
@@ -3201,10 +3156,6 @@ function loanStatusLabel(status) {
 }
 
 
-// ============================================================
-// 34. MOSTRAR MEUS EMPRÉSTIMOS
-// ============================================================
-
 function renderMyLoans() {
 
     const container =
@@ -3224,10 +3175,10 @@ function renderMyLoans() {
             <div
                 class="
                     bg-slate-100
-                    text-slate-600
                     p-4
                     rounded-xl
                     text-sm
+                    text-slate-600
                 "
             >
                 Faça login para acompanhar seus empréstimos.
@@ -3239,21 +3190,19 @@ function renderMyLoans() {
     }
 
 
-    if (
-        !myLoans.length
-    ) {
+    if (!myLoans.length) {
 
         container.innerHTML = `
             <div
                 class="
                     bg-slate-100
-                    text-slate-500
                     p-4
                     rounded-xl
                     text-sm
+                    text-slate-500
                 "
             >
-                Você ainda não possui empréstimos registrados.
+                Você ainda não possui empréstimos.
             </div>
         `;
 
@@ -3277,7 +3226,6 @@ function renderMyLoans() {
                             flex
                             flex-col
                             md:flex-row
-                            md:items-center
                             justify-between
                             gap-3
                         "
@@ -3304,22 +3252,13 @@ function renderMyLoans() {
                                     text-slate-500
                                 "
                             >
-
                                 Código:
-                                <b>
-                                    ${escapeHtml(loan.code)}
-                                </b>
-
-                                •
-
-                                Pedido:
-                                ${formatDate(loan.requested_at)}
+                                ${escapeHtml(loan.code)}
 
                                 •
 
                                 Prazo:
                                 ${formatDate(loan.due_date)}
-
                             </p>
 
                         </div>
@@ -3331,9 +3270,7 @@ function renderMyLoans() {
                                 ${
                                     loan.status === 'returned'
                                         ? 'bg-emerald-100 text-emerald-700'
-                                        : loan.status === 'cancelled'
-                                            ? 'bg-slate-200 text-slate-600'
-                                            : 'bg-amber-100 text-amber-700'
+                                        : 'bg-amber-100 text-amber-700'
                                 }
                             "
                         >
@@ -3349,10 +3286,12 @@ function renderMyLoans() {
 
 
 // ============================================================
-// 35. SOLICITAR EMPRÉSTIMO
+// 33. SOLICITAR LIVRO
 // ============================================================
 
-async function requestLoan(bookId) {
+async function requestLoan(
+    bookId
+) {
 
     if (!currentUser) {
 
@@ -3366,11 +3305,6 @@ async function requestLoan(bookId) {
 
         return;
 
-    }
-
-
-    if (!ensureConfigured()) {
-        return;
     }
 
 
@@ -3423,63 +3357,23 @@ async function requestLoan(bookId) {
         box.innerHTML = `
 
             <p>
-                <b>Voucher de Retirada:</b>
-
-                <span
-                    class="
-                        text-emerald-600
-                        font-mono
-                        font-bold
-                    "
-                >
-                    ${escapeHtml(loan?.code || '')}
-                </span>
+                <b>Voucher:</b>
+                ${escapeHtml(loan?.code || '')}
             </p>
-
 
             <p>
-                <b>Livro Solicitado:</b>
+                <b>Livro:</b>
                 ${escapeHtml(book?.title || '')}
             </p>
-
 
             <p>
                 <b>Autor:</b>
                 ${escapeHtml(book?.author || '')}
             </p>
 
-
             <p>
-                <b>Solicitante:</b>
-                ${escapeHtml(
-                    currentProfile?.full_name ||
-                    currentUser.email
-                )}
-            </p>
-
-
-            <p>
-                <b>Data do Pedido:</b>
-                ${formatDate(loan?.requested_at)}
-            </p>
-
-
-            <p>
-                <b>Prazo de Devolução:</b>
+                <b>Prazo:</b>
                 ${formatDate(loan?.due_date)}
-            </p>
-
-
-            <p
-                class="
-                    text-xs
-                    text-slate-400
-                    mt-2
-                    border-t
-                    pt-2
-                "
-            >
-                Apresente o código ao responsável da biblioteca.
             </p>
         `;
 
@@ -3493,6 +3387,7 @@ async function requestLoan(bookId) {
 
 
     renderLibrary();
+
     renderMyLoans();
 
 
@@ -3504,7 +3399,7 @@ async function requestLoan(bookId) {
 
 
 // ============================================================
-// 36. VOTOS DO USUÁRIO
+// 34. VOTOS DO USUÁRIO
 // ============================================================
 
 async function loadUserVotes() {
@@ -3543,7 +3438,8 @@ async function loadUserVotes() {
     if (!error) {
 
         (
-            data || []
+            data ||
+            []
         )
             .forEach(
                 vote => {
@@ -3563,7 +3459,7 @@ async function loadUserVotes() {
 
 
 // ============================================================
-// 37. CARREGAR ENQUETES
+// 35. ENQUETES
 // ============================================================
 
 async function loadPolls() {
@@ -3597,7 +3493,8 @@ async function loadPolls() {
             .order(
                 'created_at',
                 {
-                    ascending: false
+                    ascending:
+                        false
                 }
             );
 
@@ -3639,14 +3536,21 @@ async function loadPolls() {
 
 
     (
-        results || []
+        results ||
+        []
     )
         .forEach(
             row => {
 
                 counts.set(
-                    `${row.poll_id}:${row.option_id}`,
-                    Number(row.votes)
+                    `${
+                        row.poll_id
+                    }:${
+                        row.option_id
+                    }`,
+                    Number(
+                        row.votes
+                    )
                 );
 
             }
@@ -3655,7 +3559,8 @@ async function loadPolls() {
 
     polls =
         (
-            pollRows || []
+            pollRows ||
+            []
         )
             .map(
                 poll => ({
@@ -3664,13 +3569,18 @@ async function loadPolls() {
 
                     poll_options:
                         (
-                            poll.poll_options || []
+                            poll.poll_options ||
+                            []
                         )
                             .sort(
-                                (a, b) =>
-                                    a.label.localeCompare(
-                                        b.label
-                                    )
+                                (
+                                    a,
+                                    b
+                                ) =>
+                                    a.label
+                                        .localeCompare(
+                                            b.label
+                                        )
                             )
                             .map(
                                 option => ({
@@ -3679,8 +3589,13 @@ async function loadPolls() {
 
                                     votes:
                                         counts.get(
-                                            `${poll.id}:${option.id}`
-                                        ) || 0
+                                            `${
+                                                poll.id
+                                            }:${
+                                                option.id
+                                            }`
+                                        ) ||
+                                        0
 
                                 })
                             )
@@ -3692,7 +3607,7 @@ async function loadPolls() {
 
 
 // ============================================================
-// 38. MOSTRAR ENQUETES
+// 36. MOSTRAR ENQUETES
 // ============================================================
 
 function renderPolls() {
@@ -3708,25 +3623,18 @@ function renderPolls() {
     }
 
 
-    container.innerHTML = '';
-
-
-    if (
-        !polls.length
-    ) {
+    if (!polls.length) {
 
         container.innerHTML = `
             <div
                 class="
                     bg-slate-100
-                    text-slate-600
                     p-6
                     rounded-xl
                     text-center
-                    font-medium
                 "
             >
-                Nenhuma enquete ativa no momento.
+                Nenhuma enquete ativa.
             </div>
         `;
 
@@ -3735,50 +3643,47 @@ function renderPolls() {
     }
 
 
+    container.innerHTML =
+        '';
+
+
     polls.forEach(
         poll => {
 
-            const totalVotes =
+            const total =
                 poll.poll_options
                     .reduce(
                         (
-                            total,
+                            sum,
                             option
                         ) =>
-                            total +
+                            sum +
                             option.votes,
                         0
                     );
 
 
-            const alreadyVoted =
+            const voted =
                 userVotes.has(
                     poll.id
                 );
 
 
-            const optionsHTML =
+            const options =
                 poll.poll_options
                     .map(
                         option => {
 
-                            const percentage =
-                                totalVotes
+                            const percent =
+                                total
                                     ? Math.round(
                                         (
                                             option.votes /
-                                            totalVotes
+                                            total
                                         ) *
                                         100
                                     )
                                     : 0;
-
-
-                            const selected =
-                                userVotes.get(
-                                    poll.id
-                                ) ===
-                                option.id;
 
 
                             return `
@@ -3788,49 +3693,27 @@ function renderPolls() {
                                     <button
                                         type="button"
                                         onclick="handleVote(${poll.id}, ${option.id})"
-                                        ${alreadyVoted ? 'disabled' : ''}
+                                        ${voted ? 'disabled' : ''}
                                         class="
                                             w-full
                                             text-left
-                                            ${
-                                                selected
-                                                    ? 'bg-indigo-100 border-indigo-300'
-                                                    : 'bg-slate-50 border-slate-200'
-                                            }
                                             border
                                             p-3
                                             rounded-xl
-                                            transition
-                                            flex
-                                            justify-between
-                                            items-center
-                                            gap-3
+                                            bg-slate-50
                                         "
                                     >
 
-                                        <span
-                                            class="
-                                                font-medium
-                                                text-slate-700
-                                            "
-                                        >
-                                            <b>
-                                                ${escapeHtml(option.label)}:
-                                            </b>
+                                        <b>
+                                            ${escapeHtml(option.label)}:
+                                        </b>
 
-                                            ${escapeHtml(option.option_text)}
-                                        </span>
-
+                                        ${escapeHtml(option.option_text)}
 
                                         <span
                                             class="
+                                                float-right
                                                 text-xs
-                                                bg-slate-200
-                                                text-slate-600
-                                                px-2
-                                                py-0.5
-                                                rounded-md
-                                                font-bold
                                             "
                                         >
                                             ${option.votes} voto(s)
@@ -3841,9 +3724,8 @@ function renderPolls() {
 
                                     <div
                                         class="
-                                            w-full
-                                            bg-slate-100
                                             h-2
+                                            bg-slate-100
                                             rounded-full
                                             overflow-hidden
                                         "
@@ -3851,26 +3733,13 @@ function renderPolls() {
 
                                         <div
                                             class="
-                                                bg-indigo-600
                                                 h-full
-                                                rounded-full
+                                                bg-indigo-600
                                             "
-                                            style="width:${percentage}%"
+                                            style="width:${percent}%"
                                         ></div>
 
                                     </div>
-
-
-                                    <p
-                                        class="
-                                            text-right
-                                            text-[10px]
-                                            font-semibold
-                                            text-slate-400
-                                        "
-                                    >
-                                        ${percentage}%
-                                    </p>
 
                                 </div>
                             `;
@@ -3887,7 +3756,7 @@ function renderPolls() {
 
 
             card.className =
-                'bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative space-y-4';
+                'bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4';
 
 
             card.innerHTML = `
@@ -3896,41 +3765,18 @@ function renderPolls() {
                     class="
                         flex
                         justify-between
-                        items-start
                         gap-4
                     "
                 >
 
-                    <div>
-
-                        <h3
-                            class="
-                                text-lg
-                                font-bold
-                                text-slate-900
-                            "
-                        >
-                            ${escapeHtml(poll.question)}
-                        </h3>
-
-
-                        ${
-                            alreadyVoted
-                                ? `
-                                    <p
-                                        class="
-                                            text-xs
-                                            text-emerald-600
-                                            mt-1
-                                        "
-                                    >
-                                        Seu voto já foi registrado nesta enquete.
-                                    </p>
-                                `
-                                : ''
-                        }
-
-                    </div>
+                    <h3
+                        class="
+                            font-bold
+                            text-lg
+                        "
+                    >
+                        ${escapeHtml(poll.question)}
+                    </h3>
 
 
                     ${
@@ -3939,14 +3785,7 @@ function renderPolls() {
                                 <button
                                     type="button"
                                     onclick="deletePoll(${poll.id})"
-                                    class="
-                                        text-red-500
-                                        hover:text-red-700
-                                        p-2
-                                        rounded-xl
-                                        hover:bg-red-50
-                                    "
-                                    title="Excluir enquete"
+                                    class="text-red-500"
                                 >
                                     <i
                                         data-lucide="trash-2"
@@ -3960,9 +3799,8 @@ function renderPolls() {
                 </div>
 
 
-                <div class="space-y-3">
-                    ${optionsHTML}
-                </div>
+                ${options}
+
             `;
 
 
@@ -3981,7 +3819,7 @@ function renderPolls() {
 
 
 // ============================================================
-// 39. VOTAR
+// 37. VOTAR
 // ============================================================
 
 async function handleVote(
@@ -4042,7 +3880,7 @@ async function handleVote(
 
 
 // ============================================================
-// 40. EXCLUIR ENQUETE
+// 38. EXCLUIR ENQUETE
 // ============================================================
 
 async function deletePoll(
@@ -4101,7 +3939,7 @@ async function deletePoll(
 
 
 // ============================================================
-// 41. PAINEL ADMINISTRATIVO
+// 39. PAINEL ADMINISTRATIVO
 // ============================================================
 
 async function renderAdminDashboard() {
@@ -4136,7 +3974,8 @@ async function renderAdminDashboard() {
                 .order(
                     'created_at',
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 ),
 
@@ -4160,7 +3999,8 @@ async function renderAdminDashboard() {
                 .order(
                     'requested_at',
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 ),
 
@@ -4173,12 +4013,16 @@ async function renderAdminDashboard() {
                     email,
                     message,
                     status,
+                    admin_response,
+                    responded_at,
+                    responded_by,
                     created_at
                 `)
                 .order(
                     'created_at',
                     {
-                        ascending: false
+                        ascending:
+                            false
                     }
                 )
 
@@ -4186,7 +4030,7 @@ async function renderAdminDashboard() {
 
 
     // ========================================================
-    // NOTÍCIAS DO PAINEL
+    // NOTÍCIAS
     // ========================================================
 
     const articleList =
@@ -4202,65 +4046,36 @@ async function renderAdminDashboard() {
         ) {
 
             console.error(
-                'Erro ao carregar notícias:',
                 articleResult.error
             );
 
 
-            articleList.innerHTML = `
-                <p
-                    class="
-                        text-rose-500
-                        py-4
-                        text-center
-                    "
-                >
-                    Não foi possível carregar as notícias.
-                </p>
-            `;
+            articleList.innerHTML =
+                '<p class="text-rose-500">Erro ao carregar notícias.</p>';
 
         } else {
 
             adminArticles =
-                articleResult.data || [];
+                articleResult.data ||
+                [];
 
 
-            if (
-                !adminArticles.length
-            ) {
-
-                articleList.innerHTML = `
-                    <p
-                        class="
-                            text-slate-400
-                            py-4
-                            text-center
-                        "
-                    >
-                        Nenhuma notícia cadastrada.
-                    </p>
-                `;
-
-            } else {
-
-                articleList.innerHTML =
-                    adminArticles
+            articleList.innerHTML =
+                adminArticles.length
+                    ? adminArticles
                         .map(
                             article => `
 
                                 <div
                                     class="
                                         flex
-                                        flex-col
-                                        sm:flex-row
-                                        sm:items-center
                                         justify-between
                                         gap-3
                                         py-3
                                     "
                                 >
 
-                                    <div class="min-w-0">
+                                    <div>
 
                                         <p
                                             class="
@@ -4282,13 +4097,11 @@ async function renderAdminDashboard() {
                                                 }
                                             "
                                         >
-
                                             ${
                                                 article.status === 'published'
                                                     ? 'Publicado'
                                                     : 'Rascunho'
                                             }
-
                                         </span>
 
                                     </div>
@@ -4298,33 +4111,20 @@ async function renderAdminDashboard() {
                                         class="
                                             flex
                                             gap-3
-                                            shrink-0
                                         "
                                     >
 
                                         <button
-                                            type="button"
                                             onclick="loadArticleToEdit(${article.id})"
-                                            class="
-                                                text-indigo-600
-                                                font-semibold
-                                                text-xs
-                                                hover:underline
-                                            "
+                                            class="text-indigo-600 text-xs font-semibold"
                                         >
                                             Editar
                                         </button>
 
 
                                         <button
-                                            type="button"
                                             onclick="deleteArticle(${article.id})"
-                                            class="
-                                                text-rose-600
-                                                font-semibold
-                                                text-xs
-                                                hover:underline
-                                            "
+                                            class="text-rose-600 text-xs font-semibold"
                                         >
                                             Excluir
                                         </button>
@@ -4334,9 +4134,17 @@ async function renderAdminDashboard() {
                                 </div>
                             `
                         )
-                        .join('');
-
-            }
+                        .join('')
+                    : `
+                        <p
+                            class="
+                                text-slate-400
+                                py-4
+                            "
+                        >
+                            Nenhuma notícia cadastrada.
+                        </p>
+                    `;
 
         }
 
@@ -4344,7 +4152,7 @@ async function renderAdminDashboard() {
 
 
     // ========================================================
-    // EMPRÉSTIMOS DO PAINEL
+    // EMPRÉSTIMOS
     // ========================================================
 
     const loanList =
@@ -4360,49 +4168,23 @@ async function renderAdminDashboard() {
         ) {
 
             console.error(
-                'Erro ao carregar empréstimos:',
                 loanResult.error
             );
 
 
-            loanList.innerHTML = `
-                <p
-                    class="
-                        text-rose-500
-                        py-4
-                        text-center
-                    "
-                >
-                    Não foi possível carregar os empréstimos.
-                </p>
-            `;
+            loanList.innerHTML =
+                '<p class="text-rose-500">Erro ao carregar empréstimos.</p>';
 
         } else {
 
-            const loans =
-                loanResult.data || [];
+            const rows =
+                loanResult.data ||
+                [];
 
 
-            if (
-                !loans.length
-            ) {
-
-                loanList.innerHTML = `
-                    <p
-                        class="
-                            text-slate-400
-                            py-4
-                            text-center
-                        "
-                    >
-                        Nenhum empréstimo registrado.
-                    </p>
-                `;
-
-            } else {
-
-                loanList.innerHTML =
-                    loans
+            loanList.innerHTML =
+                rows.length
+                    ? rows
                         .map(
                             loan => `
 
@@ -4422,16 +4204,13 @@ async function renderAdminDashboard() {
                                         <p
                                             class="
                                                 font-semibold
-                                                text-slate-800
                                             "
                                         >
-                                            ${
-                                                escapeHtml(
-                                                    loan.profiles?.full_name ||
-                                                    loan.profiles?.email ||
-                                                    'Aluno'
-                                                )
-                                            }
+                                            ${escapeHtml(
+                                                loan.profiles?.full_name ||
+                                                loan.profiles?.email ||
+                                                'Aluno'
+                                            )}
                                         </p>
 
 
@@ -4441,12 +4220,10 @@ async function renderAdminDashboard() {
                                                 text-slate-600
                                             "
                                         >
-                                            ${
-                                                escapeHtml(
-                                                    loan.books?.title ||
-                                                    'Livro'
-                                                )
-                                            }
+                                            ${escapeHtml(
+                                                loan.books?.title ||
+                                                'Livro'
+                                            )}
                                         </p>
 
 
@@ -4454,14 +4231,12 @@ async function renderAdminDashboard() {
                                             class="
                                                 text-xs
                                                 text-slate-400
-                                                mt-1
                                             "
                                         >
                                             ${escapeHtml(loan.code)}
                                             •
                                             ${loanStatusLabel(loan.status)}
                                             •
-                                            Prazo:
                                             ${formatDate(loan.due_date)}
                                         </p>
 
@@ -4478,14 +4253,11 @@ async function renderAdminDashboard() {
                                             )
                                             ? `
                                                 <button
-                                                    type="button"
                                                     onclick="markLoanReturned(${loan.id})"
                                                     class="
                                                         text-emerald-700
                                                         font-bold
                                                         text-sm
-                                                        hover:underline
-                                                        shrink-0
                                                     "
                                                 >
                                                     Marcar devolvido
@@ -4497,9 +4269,17 @@ async function renderAdminDashboard() {
                                 </div>
                             `
                         )
-                        .join('');
-
-            }
+                        .join('')
+                    : `
+                        <p
+                            class="
+                                text-slate-400
+                                py-4
+                            "
+                        >
+                            Nenhum empréstimo registrado.
+                        </p>
+                    `;
 
         }
 
@@ -4507,7 +4287,7 @@ async function renderAdminDashboard() {
 
 
     // ========================================================
-    // SUPORTE DO PAINEL
+    // SUPORTE
     // ========================================================
 
     const helpList =
@@ -4533,25 +4313,22 @@ async function renderAdminDashboard() {
                     class="
                         bg-rose-50
                         text-rose-700
-                        border
-                        border-rose-200
                         p-4
                         rounded-xl
                     "
                 >
-                    Não foi possível carregar as perguntas de suporte.
+                    Não foi possível carregar as perguntas.
                 </div>
             `;
 
         } else {
 
             const questions =
-                helpResult.data || [];
+                helpResult.data ||
+                [];
 
 
-            if (
-                !questions.length
-            ) {
+            if (!questions.length) {
 
                 helpList.innerHTML = `
                     <div
@@ -4561,21 +4338,7 @@ async function renderAdminDashboard() {
                             text-slate-400
                         "
                     >
-
-                        <i
-                            data-lucide="inbox"
-                            class="
-                                w-10
-                                h-10
-                                mx-auto
-                                mb-3
-                            "
-                        ></i>
-
-                        <p>
-                            Nenhuma pergunta de suporte recebida.
-                        </p>
-
+                        Nenhuma pergunta de suporte recebida.
                     </div>
                 `;
 
@@ -4588,150 +4351,266 @@ async function renderAdminDashboard() {
 
                                 <div
                                     class="
-                                        py-5
-                                        flex
-                                        flex-col
-                                        md:flex-row
-                                        justify-between
-                                        gap-4
+                                        py-6
+                                        space-y-4
                                     "
                                 >
 
-                                    <div class="min-w-0">
-
-                                        <div
-                                            class="
-                                                flex
-                                                flex-wrap
-                                                items-center
-                                                gap-2
-                                            "
-                                        >
-
-                                            <p
-                                                class="
-                                                    font-bold
-                                                    text-slate-800
-                                                "
-                                            >
-                                                ${escapeHtml(item.name)}
-                                            </p>
-
-
-                                            ${
-                                                item.status === 'resolved'
-                                                    ? `
-                                                        <span
-                                                            class="
-                                                                text-[10px]
-                                                                font-bold
-                                                                uppercase
-                                                                bg-emerald-100
-                                                                text-emerald-700
-                                                                px-2
-                                                                py-1
-                                                                rounded-full
-                                                            "
-                                                        >
-                                                            Resolvido
-                                                        </span>
-                                                    `
-                                                    : `
-                                                        <span
-                                                            class="
-                                                                text-[10px]
-                                                                font-bold
-                                                                uppercase
-                                                                bg-amber-100
-                                                                text-amber-700
-                                                                px-2
-                                                                py-1
-                                                                rounded-full
-                                                            "
-                                                        >
-                                                            Aberto
-                                                        </span>
-                                                    `
-                                            }
-
-                                        </div>
-
+                                    <div
+                                        class="
+                                            flex
+                                            flex-wrap
+                                            items-center
+                                            gap-2
+                                        "
+                                    >
 
                                         <p
                                             class="
-                                                text-xs
-                                                text-slate-400
-                                                mt-1
-                                                break-all
+                                                font-bold
+                                                text-slate-800
                                             "
                                         >
-                                            ${escapeHtml(item.email)}
+                                            ${escapeHtml(item.name)}
                                         </p>
 
 
-                                        <div
+                                        <span
                                             class="
-                                                bg-slate-50
-                                                border
-                                                border-slate-100
-                                                rounded-xl
-                                                p-4
-                                                mt-3
+                                                text-[10px]
+                                                font-bold
+                                                uppercase
+                                                px-2
+                                                py-1
+                                                rounded-full
+
+                                                ${
+                                                    item.status === 'resolved'
+                                                        ? 'bg-emerald-100 text-emerald-700'
+                                                        : 'bg-amber-100 text-amber-700'
+                                                }
                                             "
                                         >
+                                            ${
+                                                item.status === 'resolved'
+                                                    ? 'Resolvido'
+                                                    : 'Aberto'
+                                            }
+                                        </span>
 
-                                            <p
-                                                class="
-                                                    text-sm
-                                                    text-slate-700
-                                                    leading-relaxed
-                                                    whitespace-pre-wrap
-                                                "
-                                            >
-                                                ${escapeHtml(item.message)}
-                                            </p>
+                                    </div>
 
-                                        </div>
 
+                                    <p
+                                        class="
+                                            text-xs
+                                            text-slate-400
+                                        "
+                                    >
+                                        ${escapeHtml(item.email)}
+                                    </p>
+
+
+                                    <p
+                                        class="
+                                            text-xs
+                                            text-slate-400
+                                        "
+                                    >
+                                        Enviado em:
+                                        ${formatDate(item.created_at)}
+                                    </p>
+
+
+                                    <div
+                                        class="
+                                            bg-slate-50
+                                            border
+                                            rounded-xl
+                                            p-4
+                                        "
+                                    >
 
                                         <p
                                             class="
                                                 text-xs
+                                                uppercase
+                                                font-bold
                                                 text-slate-400
-                                                mt-2
+                                                mb-2
                                             "
                                         >
-                                            Enviado em:
-                                            ${formatDate(item.created_at)}
+                                            Pergunta
+                                        </p>
+
+
+                                        <p
+                                            class="
+                                                text-sm
+                                                text-slate-700
+                                                whitespace-pre-wrap
+                                            "
+                                        >
+                                            ${escapeHtml(item.message)}
                                         </p>
 
                                     </div>
 
 
                                     ${
-                                        item.status !== 'resolved'
+                                        item.admin_response
                                             ? `
-                                                <button
-                                                    type="button"
-                                                    onclick="markHelpResolved(${item.id})"
+
+                                                <div
                                                     class="
-                                                        bg-violet-100
-                                                        hover:bg-violet-200
-                                                        text-violet-700
-                                                        font-semibold
-                                                        text-sm
-                                                        px-4
-                                                        py-2
-                                                        rounded-lg
-                                                        transition
-                                                        shrink-0
+                                                        bg-indigo-50
+                                                        border
+                                                        border-indigo-100
+                                                        rounded-xl
+                                                        p-4
                                                     "
                                                 >
-                                                    Marcar como resolvida
-                                                </button>
+
+                                                    <p
+                                                        class="
+                                                            text-xs
+                                                            font-bold
+                                                            text-indigo-500
+                                                            mb-2
+                                                        "
+                                                    >
+                                                        Resposta atual
+                                                    </p>
+
+
+                                                    <p
+                                                        class="
+                                                            text-sm
+                                                            text-slate-700
+                                                            whitespace-pre-wrap
+                                                        "
+                                                    >
+                                                        ${escapeHtml(item.admin_response)}
+                                                    </p>
+
+
+                                                    ${
+                                                        item.responded_at
+                                                            ? `
+                                                                <p
+                                                                    class="
+                                                                        text-xs
+                                                                        text-slate-400
+                                                                        mt-2
+                                                                    "
+                                                                >
+                                                                    Respondido em
+                                                                    ${formatDate(item.responded_at)}
+                                                                </p>
+                                                            `
+                                                            : ''
+                                                    }
+
+                                                </div>
+
                                             `
                                             : ''
                                     }
+
+
+                                    <div>
+
+                                        <label
+                                            class="
+                                                block
+                                                text-xs
+                                                font-bold
+                                                uppercase
+                                                text-slate-500
+                                                mb-2
+                                            "
+                                        >
+                                            ${
+                                                item.admin_response
+                                                    ? 'Editar resposta'
+                                                    : 'Responder'
+                                            }
+                                        </label>
+
+
+                                        <textarea
+                                            id="support-response-${item.id}"
+                                            rows="4"
+                                            placeholder="Digite a resposta..."
+                                            class="
+                                                w-full
+                                                px-4
+                                                py-3
+                                                border
+                                                rounded-xl
+                                                focus:ring-2
+                                                focus:ring-violet-500
+                                                focus:outline-none
+                                            "
+                                        >${escapeHtml(item.admin_response || '')}</textarea>
+
+                                    </div>
+
+
+                                    <div
+                                        class="
+                                            flex
+                                            flex-col
+                                            sm:flex-row
+                                            gap-3
+                                        "
+                                    >
+
+                                        <button
+                                            type="button"
+                                            onclick="respondHelpQuestion(${item.id})"
+                                            class="
+                                                bg-violet-600
+                                                hover:bg-violet-700
+                                                text-white
+                                                font-semibold
+                                                px-5
+                                                py-2.5
+                                                rounded-lg
+                                            "
+                                        >
+                                            ${
+                                                item.admin_response
+                                                    ? 'Atualizar Resposta'
+                                                    : 'Enviar Resposta'
+                                            }
+                                        </button>
+
+
+                                        ${
+                                            item.status !== 'resolved'
+                                                ? `
+
+                                                    <button
+                                                        type="button"
+                                                        onclick="markHelpResolved(${item.id})"
+                                                        class="
+                                                            bg-emerald-100
+                                                            text-emerald-700
+                                                            font-semibold
+                                                            px-5
+                                                            py-2.5
+                                                            rounded-lg
+                                                        "
+                                                    >
+                                                        Marcar como resolvida
+                                                    </button>
+
+                                                `
+                                                : ''
+                                        }
+
+                                    </div>
 
                                 </div>
                             `
@@ -4751,7 +4630,7 @@ async function renderAdminDashboard() {
 
 
 // ============================================================
-// 42. NAVEGAÇÃO INTERNA DO PAINEL
+// 40. NAVEGAÇÃO INTERNA DO ADMIN
 // ============================================================
 
 async function openAdminSection(
@@ -4852,7 +4731,7 @@ async function openAdminSection(
 
 
 // ============================================================
-// 43. SALVAR / PUBLICAR ARTIGO
+// 41. SALVAR ARTIGO / RASCUNHO
 // ============================================================
 
 async function saveArticle(
@@ -4875,7 +4754,8 @@ async function saveArticle(
             .getElementById(
                 'admin-article-id'
             )
-            .value;
+            ?.value ||
+        '';
 
 
     const title =
@@ -4883,8 +4763,9 @@ async function saveArticle(
             .getElementById(
                 'admin-art-title'
             )
-            .value
-            .trim();
+            ?.value
+            .trim() ||
+        '';
 
 
     const imageUrl =
@@ -4892,7 +4773,7 @@ async function saveArticle(
             .getElementById(
                 'admin-art-image'
             )
-            .value
+            ?.value
             .trim() ||
         null;
 
@@ -4902,8 +4783,9 @@ async function saveArticle(
             .getElementById(
                 'admin-art-content'
             )
-            .value
-            .trim();
+            ?.value
+            .trim() ||
+        '';
 
 
     if (
@@ -4992,19 +4874,16 @@ async function saveArticle(
     alert(
         status === 'published'
             ? 'Artigo publicado com sucesso!'
-            : 'Rascunho salvo no banco de dados!'
+            : 'Rascunho salvo com sucesso!'
     );
 
 }
 
 
-// ============================================================
-// 44. CRIAR ARTIGO
-// ============================================================
-
 async function handleCreateArticle(e) {
 
     e.preventDefault();
+
 
     await saveArticle(
         'published'
@@ -5023,7 +4902,7 @@ async function handleSaveDraft() {
 
 
 // ============================================================
-// 45. EDITAR ARTIGO
+// 42. EDITAR ARTIGO
 // ============================================================
 
 function loadArticleToEdit(id) {
@@ -5094,7 +4973,7 @@ function loadArticleToEdit(id) {
 
 
 // ============================================================
-// 46. EXCLUIR ARTIGO
+// 43. EXCLUIR ARTIGO
 // ============================================================
 
 async function deleteArticle(id) {
@@ -5153,54 +5032,40 @@ async function deleteArticle(id) {
 }
 
 
-// ============================================================
-// 47. LIMPAR FORMULÁRIO DO ARTIGO
-// ============================================================
-
 function clearArticleForm() {
 
-    const id =
-        document.getElementById(
-            'admin-article-id'
-        );
-
-    const title =
-        document.getElementById(
-            'admin-art-title'
-        );
-
-    const image =
-        document.getElementById(
-            'admin-art-image'
-        );
-
-    const content =
-        document.getElementById(
-            'admin-art-content'
-        );
+    const ids = [
+        'admin-article-id',
+        'admin-art-title',
+        'admin-art-image',
+        'admin-art-content'
+    ];
 
 
-    if (id) {
-        id.value = '';
-    }
+    ids.forEach(
+        id => {
 
-    if (title) {
-        title.value = '';
-    }
+            const element =
+                document.getElementById(
+                    id
+                );
 
-    if (image) {
-        image.value = '';
-    }
 
-    if (content) {
-        content.value = '';
-    }
+            if (element) {
+
+                element.value =
+                    '';
+
+            }
+
+        }
+    );
 
 }
 
 
 // ============================================================
-// 48. CADASTRAR LIVRO
+// 44. CADASTRAR LIVRO
 // ============================================================
 
 async function handleCreateBook(e) {
@@ -5272,21 +5137,13 @@ async function handleCreateBook(e) {
         );
 
 
-    if (!title) {
+    if (
+        !title ||
+        !author
+    ) {
 
         alert(
-            'Informe o título do livro.'
-        );
-
-        return;
-
-    }
-
-
-    if (!author) {
-
-        alert(
-            'Informe o autor do livro.'
+            'Informe título e autor.'
         );
 
         return;
@@ -5319,20 +5176,6 @@ async function handleCreateBook(e) {
     }
 
 
-    const genreId =
-        Number(
-            genreValue
-        );
-
-
-    const subgenreId =
-        subgenreValue
-            ? Number(
-                subgenreValue
-            )
-            : null;
-
-
     const {
         error
     } =
@@ -5349,10 +5192,16 @@ async function handleCreateBook(e) {
                     null,
 
                 genre_id:
-                    genreId,
+                    Number(
+                        genreValue
+                    ),
 
                 subgenre_id:
-                    subgenreId,
+                    subgenreValue
+                        ? Number(
+                            subgenreValue
+                        )
+                        : null,
 
                 total_copies:
                     copies,
@@ -5396,7 +5245,7 @@ async function handleCreateBook(e) {
 
 
 // ============================================================
-// 49. DEVOLUÇÃO DE LIVRO
+// 45. DEVOLVER LIVRO
 // ============================================================
 
 async function markLoanReturned(
@@ -5447,13 +5296,14 @@ async function markLoanReturned(
 
 
     renderLibrary();
+
     renderMyLoans();
 
 }
 
 
 // ============================================================
-// 50. CRIAR ENQUETE
+// 46. CRIAR ENQUETE
 // ============================================================
 
 async function handleCreatePoll(e) {
@@ -5517,7 +5367,9 @@ async function handleCreatePoll(e) {
             );
 
 
-    if (!question) {
+    if (
+        !question
+    ) {
 
         alert(
             'Informe a pergunta da enquete.'
@@ -5607,7 +5459,7 @@ async function handleCreatePoll(e) {
 
 
         return showError(
-            'Não foi possível salvar as opções da enquete',
+            'Não foi possível salvar as opções',
             optionsError
         );
 
@@ -5636,7 +5488,313 @@ async function handleCreatePoll(e) {
 
 
 // ============================================================
-// 51. FORMULÁRIO DE AJUDA
+// 47. CARREGAR PERGUNTAS DO USUÁRIO
+// ============================================================
+
+async function loadMyHelpQuestions() {
+
+    myHelpQuestions =
+        [];
+
+
+    if (
+        !db ||
+        !currentUser
+    ) {
+
+        return;
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await db
+            .from(
+                'help_questions'
+            )
+            .select(`
+                id,
+                name,
+                email,
+                message,
+                status,
+                admin_response,
+                responded_at,
+                created_at
+            `)
+            .eq(
+                'user_id',
+                currentUser.id
+            )
+            .order(
+                'created_at',
+                {
+                    ascending:
+                        false
+                }
+            );
+
+
+    if (error) {
+
+        console.error(
+            'Erro ao carregar perguntas:',
+            error
+        );
+
+        return;
+
+    }
+
+
+    myHelpQuestions =
+        data ||
+        [];
+
+}
+
+
+// ============================================================
+// 48. MOSTRAR PERGUNTAS DO USUÁRIO
+// ============================================================
+
+function renderMyHelpQuestions() {
+
+    const container =
+        document.getElementById(
+            'my-help-questions-container'
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (!currentUser) {
+
+        container.innerHTML = `
+            <div
+                class="
+                    bg-slate-50
+                    border
+                    rounded-xl
+                    p-5
+                    text-sm
+                    text-slate-500
+                "
+            >
+                Faça login para acompanhar suas perguntas e respostas.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    if (!myHelpQuestions.length) {
+
+        container.innerHTML = `
+            <div
+                class="
+                    bg-slate-50
+                    border
+                    rounded-xl
+                    p-5
+                    text-sm
+                    text-slate-500
+                "
+            >
+                Você ainda não enviou nenhuma pergunta.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        myHelpQuestions
+            .map(
+                item => `
+
+                    <div
+                        class="
+                            bg-white
+                            border
+                            rounded-xl
+                            p-5
+                            space-y-4
+                        "
+                    >
+
+                        <div
+                            class="
+                                flex
+                                justify-between
+                                gap-3
+                            "
+                        >
+
+                            <div>
+
+                                <p
+                                    class="
+                                        font-semibold
+                                        text-slate-900
+                                    "
+                                >
+                                    Sua pergunta
+                                </p>
+
+
+                                <p
+                                    class="
+                                        text-xs
+                                        text-slate-400
+                                    "
+                                >
+                                    ${formatDate(item.created_at)}
+                                </p>
+
+                            </div>
+
+
+                            <span
+                                class="
+                                    text-xs
+                                    font-bold
+                                    px-2
+                                    py-1
+                                    rounded-full
+
+                                    ${
+                                        item.status === 'resolved'
+                                            ? 'bg-emerald-100 text-emerald-700'
+                                            : 'bg-amber-100 text-amber-700'
+                                    }
+                                "
+                            >
+                                ${
+                                    item.status === 'resolved'
+                                        ? 'Resolvido'
+                                        : 'Em análise'
+                                }
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="
+                                bg-slate-50
+                                rounded-lg
+                                p-4
+                            "
+                        >
+
+                            <p
+                                class="
+                                    text-sm
+                                    text-slate-700
+                                    whitespace-pre-wrap
+                                "
+                            >
+                                ${escapeHtml(item.message)}
+                            </p>
+
+                        </div>
+
+
+                        ${
+                            item.admin_response
+                                ? `
+
+                                    <div
+                                        class="
+                                            bg-indigo-50
+                                            border-l-4
+                                            border-indigo-500
+                                            p-4
+                                            rounded-r-xl
+                                        "
+                                    >
+
+                                        <p
+                                            class="
+                                                text-sm
+                                                font-bold
+                                                text-indigo-800
+                                                mb-2
+                                            "
+                                        >
+                                            Resposta da equipe
+                                        </p>
+
+
+                                        <p
+                                            class="
+                                                text-sm
+                                                text-slate-700
+                                                whitespace-pre-wrap
+                                            "
+                                        >
+                                            ${escapeHtml(item.admin_response)}
+                                        </p>
+
+
+                                        ${
+                                            item.responded_at
+                                                ? `
+                                                    <p
+                                                        class="
+                                                            text-xs
+                                                            text-slate-400
+                                                            mt-3
+                                                        "
+                                                    >
+                                                        Respondido em
+                                                        ${formatDate(item.responded_at)}
+                                                    </p>
+                                                `
+                                                : ''
+                                        }
+
+                                    </div>
+
+                                `
+                                : `
+
+                                    <p
+                                        class="
+                                            text-sm
+                                            text-slate-400
+                                        "
+                                    >
+                                        Aguardando resposta da equipe.
+                                    </p>
+
+                                `
+                        }
+
+                    </div>
+                `
+            )
+            .join('');
+
+
+    renderIcons();
+
+}
+
+
+// ============================================================
+// 49. FORMULÁRIO DE AJUDA
 // ============================================================
 
 function setupHelpForm() {
@@ -5676,11 +5834,18 @@ function setupHelpForm() {
 
     }
 
+
+    loadMyHelpQuestions()
+        .then(
+            () =>
+                renderMyHelpQuestions()
+        );
+
 }
 
 
 // ============================================================
-// 52. ENVIAR PERGUNTA AO SUPORTE
+// 50. ENVIAR PERGUNTA
 // ============================================================
 
 async function handleSendHelpQuestion(e) {
@@ -5781,7 +5946,17 @@ async function handleSendHelpQuestion(e) {
         .getElementById(
             'help-mensagem'
         )
-        .value = '';
+        .value =
+        '';
+
+
+    if (currentUser) {
+
+        await loadMyHelpQuestions();
+
+        renderMyHelpQuestions();
+
+    }
 
 
     alert(
@@ -5792,10 +5967,105 @@ async function handleSendHelpQuestion(e) {
 
 
 // ============================================================
-// 53. MARCAR SUPORTE COMO RESOLVIDO
+// 51. GESTOR RESPONDER PERGUNTA
 // ============================================================
 
-async function markHelpResolved(id) {
+async function respondHelpQuestion(
+    id
+) {
+
+    if (!isAdmin()) {
+
+        alert(
+            'Ação não autorizada.'
+        );
+
+        return;
+
+    }
+
+
+    const textarea =
+        document.getElementById(
+            `support-response-${id}`
+        );
+
+
+    if (!textarea) {
+        return;
+    }
+
+
+    const response =
+        textarea
+            .value
+            .trim();
+
+
+    if (!response) {
+
+        alert(
+            'Digite uma resposta antes de enviar.'
+        );
+
+        return;
+
+    }
+
+
+    const {
+        error
+    } =
+        await db
+            .from(
+                'help_questions'
+            )
+            .update({
+
+                admin_response:
+                    response,
+
+                responded_at:
+                    new Date()
+                        .toISOString(),
+
+                responded_by:
+                    currentUser.id
+
+            })
+            .eq(
+                'id',
+                id
+            );
+
+
+    if (error) {
+
+        return showError(
+            'Não foi possível responder a pergunta',
+            error
+        );
+
+    }
+
+
+    alert(
+        'Resposta salva com sucesso!'
+    );
+
+
+    await renderAdminDashboard();
+
+}
+
+
+// ============================================================
+// 52. MARCAR PERGUNTA COMO RESOLVIDA
+// ============================================================
+
+async function markHelpResolved(
+    id
+) {
 
     if (!isAdmin()) {
 
@@ -5841,7 +6111,7 @@ async function markHelpResolved(id) {
 
 
 // ============================================================
-// 54. INICIALIZAÇÃO
+// 53. INICIALIZAÇÃO DO SISTEMA
 // ============================================================
 
 async function initializeApp() {
@@ -5856,15 +6126,15 @@ async function initializeApp() {
         );
 
 
-        const container =
+        const articlesContainer =
             document.getElementById(
                 'articles-container'
             );
 
 
-        if (container) {
+        if (articlesContainer) {
 
-            container.innerHTML = `
+            articlesContainer.innerHTML = `
                 <div
                     class="
                         col-span-full
@@ -5880,7 +6150,7 @@ async function initializeApp() {
                         Configuração pendente:
                     </b>
 
-                    configure o Supabase no script.js.
+                    configure o Supabase.
                 </div>
             `;
 
@@ -5892,10 +6162,7 @@ async function initializeApp() {
     }
 
 
-    // ========================================================
-    // VERIFICAR RECUPERAÇÃO DE SENHA
-    // ========================================================
-
+    // Recuperação de senha
     const urlParams =
         new URLSearchParams(
             window.location.search
@@ -5908,10 +6175,7 @@ async function initializeApp() {
         ) === '1';
 
 
-    // ========================================================
-    // EVENTOS DE AUTENTICAÇÃO
-    // ========================================================
-
+    // Listener precisa vir antes de getSession
     db
         .auth
         .onAuthStateChange(
@@ -5929,8 +6193,7 @@ async function initializeApp() {
                         ) {
 
                             currentUser =
-                                sessionState
-                                    ?.user ||
+                                sessionState?.user ||
                                 null;
 
 
@@ -5967,8 +6230,7 @@ async function initializeApp() {
                         ) {
 
                             await syncCurrentUser(
-                                sessionState
-                                    ?.user ||
+                                sessionState?.user ||
                                 null
                             );
 
@@ -5981,10 +6243,6 @@ async function initializeApp() {
             }
         );
 
-
-    // ========================================================
-    // SESSÃO ATUAL
-    // ========================================================
 
     const {
         data: {
@@ -6002,10 +6260,7 @@ async function initializeApp() {
     );
 
 
-    // ========================================================
-    // CARREGAR DADOS
-    // ========================================================
-
+    // Carregar conteúdo principal
     await Promise.all([
         loadArticles(),
         loadGenres(),
@@ -6020,15 +6275,12 @@ async function initializeApp() {
         await Promise.all([
             loadSavedArticles(),
             loadMyLoans(),
-            loadUserVotes()
+            loadUserVotes(),
+            loadMyHelpQuestions()
         ]);
 
     }
 
-
-    // ========================================================
-    // MOSTRAR DADOS
-    // ========================================================
 
     renderArticles();
 
@@ -6038,16 +6290,14 @@ async function initializeApp() {
 
     renderPolls();
 
+    renderMyHelpQuestions();
+
     renderAdminGenreSelect();
 
     updateAuthUI();
 
     renderIcons();
 
-
-    // ========================================================
-    // RECUPERAÇÃO DE SENHA
-    // ========================================================
 
     if (
         isRecovery &&
@@ -6064,7 +6314,7 @@ async function initializeApp() {
 
 
 // ============================================================
-// 55. INICIAR HENRINEWS
+// 54. INICIAR HENRINEWS
 // ============================================================
 
 document.addEventListener(
