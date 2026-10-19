@@ -2670,57 +2670,211 @@
         </section>
 
 
-        <!-- ================================================= -->
-        <!-- PAINEL GESTOR -->
-        <!-- ================================================= -->
+        <!-- =========================================================
+                       PAINEL DO ADMINISTRADOR / GESTOR
+        ========================================================= -->
 
-        <section
-            id="tab-admin"
-            class="tab-content space-y-10"
-        >
+        <section id="tab-admin" class="tab-content space-y-8">
 
-            <div class="border-b pb-4 border-slate-200">
+            <!-- CABEÇALHO -->
+            <div class="border-b pb-5 border-slate-200">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
 
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-                    Painel Administrativo
-                </h1>
+                    <div>
+                        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+                            Painel do Gestor
+                        </h1>
 
-                <p class="text-slate-500">
-                    Módulo central para gestão de notícias,
-                    controle de acervo e enquetes escolares.
-                </p>
+                        <p class="text-slate-500">
+                            Gerencie o conteúdo e os serviços do HenriNews.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- =====================================================
+                           VISÃO GERAL
+            ====================================================== -->
+
+            <div id="admin-view-overview" class="admin-view space-y-6">
+
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">
+                        O que você deseja gerenciar?
+                    </h2>
+
+                    <p class="text-sm text-slate-500 mt-1">
+                        Escolha uma das áreas abaixo.
+                    </p>
+                </div>
+
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+                    <!-- NOTÍCIAS -->
+
+                    <button
+                        type="button"
+                        onclick="openAdminSection('articles')"
+                        class="bg-white border border-slate-200 rounded-2xl p-6 text-left shadow-sm hover:shadow-md hover:border-indigo-300 transition group"
+                    >
+
+                        <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="newspaper" class="w-6 h-6"></i>
+                        </div>
+
+                        <h3 class="font-bold text-lg text-slate-900 group-hover:text-indigo-600">
+                            Notícias
+                        </h3>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Criar, editar e publicar notícias.
+                        </p>
+
+                        <div class="flex items-center gap-1 text-indigo-600 text-sm font-semibold mt-5">
+                            Abrir
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+
+                    </button>
+
+
+                    <!-- BIBLIOTECA -->
+
+                    <button
+                        type="button"
+                        onclick="openAdminSection('library')"
+                        class="bg-white border border-slate-200 rounded-2xl p-6 text-left shadow-sm hover:shadow-md hover:border-emerald-300 transition group"
+                    >
+
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="library" class="w-6 h-6"></i>
+                        </div>
+
+                        <h3 class="font-bold text-lg text-slate-900 group-hover:text-emerald-600">
+                            Biblioteca
+                        </h3>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Cadastrar livros e controlar empréstimos.
+                        </p>
+
+                        <div class="flex items-center gap-1 text-emerald-600 text-sm font-semibold mt-5">
+                            Abrir
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+
+                    </button>
+
+
+                    <!-- ENQUETES -->
+
+                    <button
+                        type="button"
+                        onclick="openAdminSection('polls')"
+                        class="bg-white border border-slate-200 rounded-2xl p-6 text-left shadow-sm hover:shadow-md hover:border-amber-300 transition group"
+                    >
+
+                        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="vote" class="w-6 h-6"></i>
+                        </div>
+
+                        <h3 class="font-bold text-lg text-slate-900 group-hover:text-amber-600">
+                            Enquetes
+                        </h3>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Criar votações para os estudantes.
+                        </p>
+
+                        <div class="flex items-center gap-1 text-amber-600 text-sm font-semibold mt-5">
+                            Abrir
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+
+                    </button>
+
+
+                    <!-- SUPORTE -->
+
+                    <button
+                        type="button"
+                        onclick="openAdminSection('support')"
+                        class="bg-white border border-slate-200 rounded-2xl p-6 text-left shadow-sm hover:shadow-md hover:border-violet-300 transition group"
+                    >
+
+                        <div class="w-12 h-12 bg-violet-100 text-violet-600 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="messages-square" class="w-6 h-6"></i>
+                        </div>
+
+                        <h3 class="font-bold text-lg text-slate-900 group-hover:text-violet-600">
+                            Suporte
+                        </h3>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Visualizar dúvidas enviadas pelos usuários.
+                        </p>
+
+                        <div class="flex items-center gap-1 text-violet-600 text-sm font-semibold mt-5">
+                            Abrir
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </div>
+
+                    </button>
+
+                </div>
 
             </div>
 
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    
+        <!-- =====================================================
+                         NOTÍCIAS
+        ====================================================== -->
+
+        <div id="admin-view-articles" class="admin-view hidden space-y-6">
+
+            <button
+                type="button"
+                onclick="openAdminSection('overview')"
+                class="flex items-center gap-2 text-indigo-600 font-semibold hover:underline"
+            >
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Voltar ao Painel
+            </button>
+
+            <div class="flex items-center gap-3 border-b pb-4">
+
+                <div class="w-11 h-11 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="newspaper" class="w-5 h-5"></i>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">
+                        Notícias e Artigos
+                    </h2>
+
+                    <p class="text-sm text-slate-500">
+                        Crie, edite ou salve notícias como rascunho.
+                    </p>
+                </div>
+
+            </div>
 
 
-                <!-- ARTIGOS -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-                <div
-                    class="
-                        bg-white
-                        p-4
-                        sm:p-6
-                        rounded-2xl
-                        border
-                        shadow-sm
-                        space-y-4
-                    "
-                >
+                <!-- FORMULÁRIO -->
 
-                    <h3 class="text-xl font-bold flex items-center gap-2">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
-                        <i
-                            data-lucide="file-plus-2"
-                            class="text-indigo-600"
-                        ></i>
-
-                        Criar Artigo / Notícia
-
+                    <h3 class="font-bold text-lg text-slate-900 mb-5">
+                        Criar / Editar Notícia
                     </h3>
-
 
                     <form
                         class="space-y-4"
@@ -2736,25 +2890,16 @@
                         <div>
 
                             <label class="block text-xs font-semibold text-slate-600 mb-1">
-                                Título do Artigo
+                                Título
                             </label>
 
                             <input
-                                id="admin-art-title"
                                 type="text"
+                                id="admin-art-title"
                                 required
-                                class="
-                                    w-full
-                                    px-3
-                                    py-2
-                                    border
-                                    rounded-lg
-                                    focus:ring-2
-                                    focus:ring-indigo-500
-                                    focus:outline-none
-                                "
-                            >
-
+                                class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                                placeholder="Título da notícia"
+                                >
                         </div>
 
 
@@ -2765,65 +2910,36 @@
                             </label>
 
                             <input
-                                id="admin-art-image"
                                 type="url"
+                                id="admin-art-image"
+                                class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                                 placeholder="https://..."
-                                class="
-                                    w-full
-                                    px-3
-                                    py-2
-                                    border
-                                    rounded-lg
-                                    focus:ring-2
-                                    focus:ring-indigo-500
-                                    focus:outline-none
-                                "
                             >
-
                         </div>
-
 
                         <div>
 
                             <label class="block text-xs font-semibold text-slate-600 mb-1">
-                                Conteúdo da Notícia
+                                Conteúdo
                             </label>
 
                             <textarea
                                 id="admin-art-content"
-                                rows="5"
+                                rows="10"
                                 required
-                                class="
-                                    w-full
-                                    px-3
-                                    py-2
-                                    border
-                                    rounded-lg
-                                    focus:ring-2
-                                    focus:ring-indigo-500
-                                    focus:outline-none
-                                "
+                                class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                                placeholder="Escreva a notícia..."
                             ></textarea>
 
                         </div>
 
 
-                        <div class="flex flex-col sm:flex-row gap-2 sm:justify-end">
+                        <div class="flex flex-col sm:flex-row gap-3">
 
                             <button
                                 type="button"
                                 onclick="handleSaveDraft()"
-                                class="
-                                    w-full
-                                    sm:w-auto
-                                    bg-slate-100
-                                    hover:bg-slate-200
-                                    text-slate-700
-                                    font-medium
-                                    px-4
-                                    py-2
-                                    rounded-lg
-                                "
+                                class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-lg transition"
                             >
                                 Salvar Rascunho
                             </button>
@@ -2831,510 +2947,535 @@
 
                             <button
                                 type="submit"
-                                class="
-                                    w-full
-                                    sm:w-auto
-                                    bg-indigo-600
-                                    hover:bg-indigo-700
-                                    text-white
-                                    font-medium
-                                    px-4
-                                    py-2
-                                    rounded-lg
-                                "
+                                class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition"
                             >
-                                Publicar Artigo
+                                Publicar Notícia
                             </button>
 
                         </div>
 
                     </form>
 
-
-                    <div class="border-t pt-4">
-
-                        <h4 class="font-bold text-sm text-slate-700 mb-2">
-                            Artigos Ativos no Sistema
-                        </h4>
-
-                        <div
-                            id="admin-articles-list"
-                            class="divide-y text-sm"
-                        ></div>
-
-                    </div>
-
                 </div>
 
 
-                <!-- BIBLIOTECA ADMIN -->
 
-                <div
-                    class="
-                        bg-white
-                        p-4
-                        sm:p-6
-                        rounded-2xl
-                        border
-                        shadow-sm
-                        space-y-4
-                    "
-                >
+                <!-- LISTA -->
 
-                    <h3 class="text-xl font-bold flex items-center gap-2">
+                
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
-                        <i
-                            data-lucide="book-plus"
-                            class="text-emerald-600"
-                        ></i>
+                    <div class="flex items-center justify-between mb-4">
 
+                        <div>
+
+                            <h3 class="font-bold text-lg text-slate-900">
+                                Notícias cadastradas
+                            </h3>
+
+                            <p class="text-xs text-slate-500">
+                                Publicações e rascunhos do HenriNews.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="admin-articles-list"
+                        class="divide-y max-h-[600px] overflow-y-auto"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+
+        <!-- =====================================================
+                              BIBLIOTECA
+        ====================================================== -->
+
+        <div id="admin-view-library" class="admin-view hidden space-y-6">
+
+            <button
+                type="button"
+                onclick="openAdminSection('overview')"
+                class="flex items-center gap-2 text-emerald-600 font-semibold hover:underline"
+            >
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Voltar ao Painel
+            </button>
+
+            <div class="flex items-center gap-3 border-b pb-4">
+
+                <div class="w-11 h-11 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="library" class="w-5 h-5"></i>
+                </div>
+
+                <div>
+
+                    <h2 class="text-2xl font-bold text-slate-900">
                         Gerenciar Biblioteca
+                    </h2>
 
+                    <p class="text-sm text-slate-500">
+                        Cadastre livros e acompanhe empréstimos.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+                <!-- CADASTRAR LIVRO -->
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+
+                    <h3 class="font-bold text-lg text-slate-900 mb-5">
+                        Cadastrar novo livro
                     </h3>
 
 
                     <form
-                        class="space-y-4"
+
                         onsubmit="handleCreateBook(event)"
+                        class="space-y-4"
                     >
-                
-                        <!-- TÍTULO -->
-                
+
                         <div>
-                
-                            <label
-                                class="
-                                    block
-                                    text-xs
-                                    font-semibold
-                                    text-slate-600
-                                    mb-1
-                                "
-                            >
-                                Título do Livro
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">
+                                Título
                             </label>
-                
+
                             <input
                                 id="admin-book-title"
                                 type="text"
                                 required
+                                class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                                 placeholder="Ex.: Dom Casmurro"
-                                class="
-                                    w-full
-                                    px-3
-                                    py-2
-                                    border
-                                    rounded-lg
-                                    focus:ring-2
-                                    focus:ring-emerald-500
-                                    focus:outline-none
-                                "
+
                             >
-                
                         </div>
-                
-                
-                        <!-- AUTOR -->
-                
+
+
                         <div>
-                
-                            <label
-                                class="
-                                    block
-                                    text-xs
-                                    font-semibold
-                                    text-slate-600
-                                    mb-1
-                                "
-                            >
+
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">
                                 Autor
                             </label>
-                
+
                             <input
                                 id="admin-book-author"
                                 type="text"
                                 required
                                 placeholder="Ex.: Machado de Assis"
-                                class="
-                                    w-full
-                                    px-3
-                                    py-2
-                                    border
-                                    rounded-lg
-                                    focus:ring-2
-                                    focus:ring-emerald-500
-                                    focus:outline-none
-                                "
+                                class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                             >
-                
+
                         </div>
-                
-                
-                        <!-- DESCRIÇÃO -->
-                
+
                         <div>
-                
-                            <label
-                                class="
-                                    block
-                                    text-xs
-                                    font-semibold
-                                    text-slate-600
-                                    mb-1
-                                "
-                            >
+
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">
                                 Descrição
                             </label>
-                
+
                             <textarea
+
                                 id="admin-book-desc"
-                                rows="3"
+
+                                rows="4"
+
                                 placeholder="Breve descrição do livro"
-                                class="
-                                    w-full
-                                    px-3
-                                    py-2
-                                    border
-                                    rounded-lg
-                                    focus:ring-2
-                                    focus:ring-emerald-500
-                                    focus:outline-none
-                                "
-                            ></textarea>
-                
+
+                                class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+
+                            ></textarea>   
                         </div>
-                
-                
+
+
                         <!-- GÊNERO -->
-                
+
                         <div>
-                
-                            <label
-                                class="
-                                    block
-                                    text-xs
-                                    font-semibold
-                                    text-slate-600
-                                    mb-1
-                                "
-                            >
+
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">
                                 Gênero
                             </label>
-                
+
                             <select
                                 id="admin-book-genre"
                                 required
                                 onchange="updateAdminSubgenres()"
-                                class="
-                                    w-full
-                                    px-3
-                                    py-2.5
-                                    border
-                                    rounded-lg
-                                    bg-white
-                                    focus:ring-2
-                                    focus:ring-emerald-500
-                                    focus:outline-none
-                                "
+                                class="w-full px-3 py-2.5 border rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                             >
-                
+
                                 <option value="">
                                     Selecione um gênero
                                 </option>
-                
+
                             </select>
-                
+
                         </div>
-                
-                
+
+
                         <!-- SUBGÊNERO -->
-                
+
                         <div>
-                
-                            <label
-                                class="
-                                    block
-                                    text-xs
-                                    font-semibold
-                                    text-slate-600
-                                    mb-1
-                                "
-                            >
+
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">
                                 Subgênero
                                 <span class="font-normal text-slate-400">
                                     (opcional)
                                 </span>
                             </label>
-                
+
                             <select
                                 id="admin-book-subgenre"
-                                class="
-                                    w-full
-                                    px-3
-                                    py-2.5
-                                    border
-                                    rounded-lg
-                                    bg-white
-                                    focus:ring-2
-                                    focus:ring-emerald-500
-                                    focus:outline-none
-                                "
+                                class="w-full px-3 py-2.5 border rounded-lg bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                             >
-                
+
                                 <option value="">
                                     Nenhum subgênero
                                 </option>
-                
+
                             </select>
-                
+
                         </div>
-                
-                
+
+
                         <!-- QUANTIDADE -->
-                
+
                         <div>
-                
-                            <label
-                                class="
-                                    block
-                                    text-xs
-                                    font-semibold
-                                    text-slate-600
-                                    mb-1
-                                "
-                            >
-                                Quantidade de Exemplares
+
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">
+                                Quantidade de exemplares
                             </label>
-                
+
                             <input
                                 id="admin-book-copies"
                                 type="number"
                                 min="1"
                                 value="1"
                                 required
-                                class="
-                                    w-full
-                                    px-3
-                                    py-2
-                                    border
-                                    rounded-lg
-                                    focus:ring-2
-                                    focus:ring-emerald-500
-                                    focus:outline-none
-                                "
+                                class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                             >
-                
+
                         </div>
-                
-                
+
+
                         <button
                             type="submit"
-                            class="
-                                w-full
-                                bg-emerald-600
-                                hover:bg-emerald-700
-                                text-white
-                                font-medium
-                                py-2.5
-                                rounded-lg
-                                transition
-                            "
+                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-lg transition"
                         >
                             Cadastrar Livro
                         </button>
-                
+
                     </form>
-
-
-                    <div class="border-t pt-4">
-
-                        <h4 class="font-bold text-sm text-slate-700 mb-2">
-                            Empréstimos Registrados
-                        </h4>
-
-                        <div
-                            id="admin-loans-list"
-                            class="
-                                divide-y
-                                text-xs
-                                max-h-60
-                                overflow-y-auto
-                            "
-                        ></div>
-
-                    </div>
 
                 </div>
 
 
-                <!-- ENQUETES ADMIN -->
+                <!-- EMPRÉSTIMOS -->
 
-                <div
-                    class="
-                        bg-white
-                        p-4
-                        sm:p-6
-                        rounded-2xl
-                        border
-                        shadow-sm
-                        space-y-4
-                        lg:col-span-2
-                    "
-                >
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
-                    <h3 class="text-xl font-bold flex items-center gap-2">
+                    <div class="mb-4">
 
-                        <i
-                            data-lucide="vote"
-                            class="text-amber-600"
-                        ></i>
+                        <h3 class="font-bold text-lg text-slate-900">
+                            Empréstimos
+                        </h3>
 
-                        Criar Nova Enquete Estudantil
+                        <p class="text-xs text-slate-500">
+                            Controle de livros solicitados, emprestados e devolvidos.
+                        </p>
+                    </div>
+                    <div
+                        id="admin-loans-list"
+                        class="divide-y max-h-[650px] overflow-y-auto text-sm"
+                    ></div>
 
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+            ENQUETES
+        ====================================================== -->
+
+        <div id="admin-view-polls" class="admin-view hidden space-y-6">
+
+            <button
+                type="button"
+                onclick="openAdminSection('overview')"
+                class="flex items-center gap-2 text-amber-600 font-semibold hover:underline"
+            >
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Voltar ao Painel
+            </button>
+
+
+            <div class="flex items-center gap-3 border-b pb-4">
+
+                <div class="w-11 h-11 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="vote" class="w-5 h-5"></i>
+                </div>
+
+                <div>
+
+                    <h2 class="text-2xl font-bold text-slate-900">
+                        Enquetes Estudantis
+                    </h2>
+
+                    <p class="text-sm text-slate-500">
+                        Crie novas votações para alunos e professores.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2">
+
+                    <h3 class="font-bold text-lg text-slate-900 mb-5">
+                        Criar nova enquete
                     </h3>
 
 
                     <form
-                        class="space-y-4 max-w-2xl"
                         onsubmit="handleCreatePoll(event)"
+                        class="space-y-4"
                     >
 
                         <div>
 
                             <label class="block text-xs font-semibold text-slate-600 mb-1">
-                                Pergunta da Enquete
+                                Pergunta
                             </label>
 
                             <input
                                 id="admin-poll-question"
                                 type="text"
                                 required
-                                class="
-                                    w-full
-                                    px-3
-                                    py-2
-                                    border
-                                    rounded-lg
-                                    focus:ring-2
-                                    focus:ring-amber-500
-                                    focus:outline-none
-                                "
+                                class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                                placeholder="Ex.: Qual deve ser o tema da próxima feira cultural?"
                             >
-
                         </div>
 
 
-                        <div
-                            class="
-                                grid
-                                grid-cols-1
-                                sm:grid-cols-2
-                                lg:grid-cols-3
-                                gap-3
-                            "
-                        >
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
-                            <input
-                                id="admin-poll-opA"
-                                type="text"
-                                required
-                                placeholder="Opção A"
-                                class="w-full px-3 py-2 border rounded-lg"
-                            >
+                            <div>
 
-                            <input
-                                id="admin-poll-opB"
-                                type="text"
-                                required
-                                placeholder="Opção B"
-                                class="w-full px-3 py-2 border rounded-lg"
-                            >
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">
+                                    Opção A
+                                </label>
 
-                            <input
-                                id="admin-poll-opC"
-                                type="text"
-                                required
-                                placeholder="Opção C"
-                                class="w-full px-3 py-2 border rounded-lg"
-                            >
+                                <input
+                                    id="admin-poll-opA"
+                                    type="text"
+                                    required
+                                    class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                                >
 
-                            <input
-                                id="admin-poll-opD"
-                                type="text"
-                                placeholder="Opção D (opcional)"
-                                class="w-full px-3 py-2 border rounded-lg"
-                            >
+                            </div>
 
-                            <input
-                                id="admin-poll-opE"
-                                type="text"
-                                placeholder="Opção E (opcional)"
-                                class="w-full px-3 py-2 border rounded-lg"
-                            >
+
+                            <div>
+
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">
+                                    Opção B
+                                </label>
+
+                                <input
+                                    id="admin-poll-opB"
+                                    type="text"
+                                    required
+                                    class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">
+                                    Opção C
+                                    <span class="font-normal text-slate-400">
+                                        (opcional)
+                                    </span>
+                                </label>
+
+                                <input
+                                    id="admin-poll-opC"
+                                    type="text"
+                                    class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">
+                                    Opção D
+                                    <span class="font-normal text-slate-400">
+                                        (opcional)
+                                    </span>
+                                </label>
+
+                                <input
+                                    id="admin-poll-opD"
+                                    type="text"
+                                    class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                                >
+
+                            </div>
+
+
+                            <div>
+
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">
+                                    Opção E
+                                    <span class="font-normal text-slate-400">
+                                        (opcional)
+                                    </span>
+                                </label>
+
+                                <input
+                                    id="admin-poll-opE"
+                                    type="text"
+                                    class="w-full px-3 py-2.5 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                                >
+
+                            </div>
 
                         </div>
 
 
                         <button
                             type="submit"
-                            class="
-                                w-full
-                                sm:w-auto
-                                bg-amber-500
-                                hover:bg-amber-600
-                                text-slate-900
-                                font-bold
-                                px-5
-                                py-2.5
-                                rounded-lg
-                            "
+                            class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-6 py-2.5 rounded-lg transition"
                         >
-                            Ativar Enquete para Alunos
+                            Criar Enquete
                         </button>
 
                     </form>
 
                 </div>
 
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-fit">
+
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center mb-4">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                    </div>
+
+                    <h3 class="font-bold text-lg text-slate-900">
+                        Enquetes publicadas
+                    </h3>
+
+                    <p class="text-sm text-slate-500 mt-2 leading-relaxed">
+                        As enquetes criadas aqui aparecem automaticamente na área de Enquetes do HenriNews.
+                    </p>
+
+
+                    <button
+                        type="button"
+                        onclick="switchTab('enquetes')"
+                        class="mt-5 w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-2.5 rounded-lg transition"
+                    >
+                        Ver Enquetes
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+                             SUPORTE
+        ====================================================== -->
+
+        <div id="admin-view-support" class="admin-view hidden space-y-6">
+
+            <button
+                type="button"
+                onclick="openAdminSection('overview')"
+                class="flex items-center gap-2 text-violet-600 font-semibold hover:underline"
+            >
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Voltar ao Painel
+            </button>
+
+            <div class="flex items-center gap-3 border-b pb-4">
+
+                <div class="w-11 h-11 bg-violet-100 text-violet-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="messages-square" class="w-5 h-5"></i>
+                </div>
+
+                <div>
+
+                    <h2 class="text-2xl font-bold text-slate-900">
+                        Perguntas de Suporte
+                    </h2>
+
+                    <p class="text-sm text-slate-500">
+                        Veja as dúvidas enviadas por alunos e professores.
+                    </p>
+
+                </div>
+
             </div>
 
 
-            <!-- SUPORTE ADMIN -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
 
-            <div
-                class="
-                    bg-white
-                    p-4
-                    sm:p-6
-                    rounded-2xl
-                    border
-                    shadow-sm
-                    space-y-4
-                "
-            >
-
-                <h3 class="text-xl font-bold flex items-center gap-2">
+                <div class="flex items-center gap-2 mb-5">
 
                     <i
-                        data-lucide="messages-square"
-                        class="text-violet-600"
+                        data-lucide="inbox"
+                        class="w-5 h-5 text-violet-600"
                     ></i>
 
-                    Perguntas de Suporte
+                    <h3 class="font-bold text-lg text-slate-900">
+                        Caixa de Entrada
+                    </h3>
 
-                </h3>
+                </div>
 
 
                 <div
                     id="admin-help-list"
-                    class="divide-y text-sm"
+                    class="divide-y"
                 ></div>
 
             </div>
 
-        </section>
+        </div>
 
-    </main>
+    </section>
+
+
+
+
+
+
 
 
     <!-- ===================================================== -->
