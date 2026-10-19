@@ -1271,21 +1271,16 @@
             id="tab-biblioteca"
             class="tab-content space-y-8"
         >
-
+        
+            <!-- CABEÇALHO -->
             <div class="border-b pb-4 border-slate-200">
-
-                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-                    Biblioteca Digital
-                </h1>
-
-                <p class="text-slate-500">
-                    Explore o acervo físico e digital disponível para empréstimos rápidos.
-                </p>
-
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Biblioteca Digital</h1>
+                <p class="text-slate-500">Explore o acervo da escola por gênero, subgênero ou utilize a pesquisa.</p>
             </div>
 
-
+            <!-- ================================================= -->
             <!-- PESQUISA -->
+            <!-- ================================================= -->
 
             <div
                 class="
@@ -1319,13 +1314,13 @@
                     <input
                         id="lib-search-input"
                         type="text"
-                        placeholder="Buscar livros..."
-                        oninput="renderLibrary()"
+                        placeholder="Buscar por título, autor ou descrição..."
+                        oninput="handleLibrarySearch()"
                         class="
                             w-full
                             pl-10
                             pr-4
-                            py-2
+                            py-2.5
                             border
                             border-slate-200
                             rounded-lg
@@ -1343,11 +1338,11 @@
 
                     <select
                         id="lib-filter-select"
-                        onchange="renderLibrary()"
+                        onchange="handleLibrarySearch()"
                         class="
                             w-full
                             px-3
-                            py-2
+                            py-2.5
                             border
                             border-slate-200
                             rounded-lg
@@ -1360,7 +1355,7 @@
                     >
 
                         <option value="all">
-                            Filtrar por Tudo
+                            Tudo
                         </option>
 
                         <option value="titulo">
@@ -1369,6 +1364,7 @@
 
                         <option value="autor">
                             Autor
+
                         </option>
 
                         <option value="descricao">
@@ -1382,24 +1378,335 @@
             </div>
 
 
-            <!-- LIVROS -->
+            <!-- ================================================= -->
+            <!-- RESULTADOS DE PESQUISA -->
+            <!-- ================================================= -->
 
             <div
-                id="library-container"
-                class="
-                    grid
-                    grid-cols-1
-                    md:grid-cols-2
-                    lg:grid-cols-4
-                    gap-6
-                "
+                id="library-search-section"
+                class="hidden space-y-4"
             >
+
+                <div class="flex items-center justify-between gap-4">
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">
+                        Resultados da pesquisa
+                        </h2>
+
+                        <p
+                            id="library-search-count"
+                            class="text-sm text-slate-500"
+                        ></p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        onclick="clearLibrarySearch()"
+                        class="
+                            text-sm
+                            text-indigo-600
+                            font-semibold
+                            hover:underline
+                        "
+                    >        
+                        Limpar pesquisa
+                    </button>
+               </div>
+
+               <div
+                    id="library-search-results"
+                    class="
+                        grid
+                        grid-cols-1
+                        md:grid-cols-2
+                        lg:grid-cols-4
+                        gap-6
+                    "
+                ></div>
+
             </div>
 
 
-            <!-- MEUS EMPRÉSTIMOS -->
+            <!-- ================================================= -->
+            <!-- TELA PRINCIPAL DA BIBLIOTECA -->
+            <!-- ================================================= -->
 
-            <div class="border-t border-slate-200 pt-8 space-y-4">
+            <div
+                id="library-home"
+                class="space-y-10"
+            >
+
+
+                <!-- ============================================= -->
+                <!-- NOVOS LIVROS -->
+                <!-- ============================================= -->
+
+                <div class="space-y-4">
+
+                    <div class="flex items-center gap-2">
+
+                        <div
+                            class="
+                                bg-indigo-100
+                                text-indigo-600
+                                p-2
+                                rounded-lg
+                            "
+                        >
+
+                            <i
+                                data-lucide="sparkles"
+                                class="w-5 h-5"
+                            ></i>
+                        </div>
+
+                        <div>
+
+                            <h2 class="text-xl font-bold text-slate-900">
+                                Novos na Biblioteca
+                            </h2>
+
+                            <p class="text-sm text-slate-500">
+                                Confira os livros adicionados recentemente ao acervo.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="new-books-container"
+                        class="
+                            flex
+                            gap-4
+                            overflow-x-auto
+                            pb-3
+                            snap-x
+                        "
+                    >
+                    </div>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- GÊNEROS -->
+                <!-- ============================================= -->
+
+                <div class="space-y-5">
+
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">
+                            Explore por gênero
+                        </h2>
+
+                        <p class="text-sm text-slate-500">
+                            Escolha uma categoria para encontrar os livros.
+                        </p>
+                    </div>
+
+                    <div
+                        id="genres-container"
+                        class="
+                            grid
+                            grid-cols-2
+                            md:grid-cols-3
+                            lg:grid-cols-4
+                            gap-4
+                        "
+                    >
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TELA DO GÊNERO -->
+            <!-- ================================================= -->
+
+            <div
+                id="library-genre-view"
+                class="hidden space-y-8"
+            >
+
+                <button
+                    type="button"
+                    onclick="backToLibraryHome()"
+                    class="
+                        text-indigo-600
+                        font-semibold
+                        flex
+                        items-center
+                        gap-1
+                        hover:underline
+                    "
+                >
+
+                    <i
+                        data-lucide="arrow-left"
+                        class="w-4 h-4"
+                    ></i>
+
+                    Voltar para Biblioteca
+
+                </button>
+
+
+                <div class="border-b pb-4">
+
+                    <h2
+                        id="current-genre-title"
+                        class="
+                            text-2xl
+                            md:text-3xl
+                            font-extrabold
+                            text-slate-900
+                        "
+                    >
+                    </h2>
+
+                    <p class="text-slate-500">
+                        Escolha um subgênero ou veja todos os livros desta categoria.
+                    </p>
+
+                </div>
+
+
+                <!-- SUBGÊNEROS -->
+
+                <div class="space-y-4">
+
+                    <h3 class="font-bold text-lg text-slate-900">
+                        Subgêneros
+                    </h3>
+
+                    <div
+                        id="subgenres-container"
+                        class="
+                            grid
+                            grid-cols-1
+                            sm:grid-cols-2
+                            lg:grid-cols-3
+                            gap-4
+                        "
+                    >
+                    </div>
+                </div>
+
+
+                <!-- LIVROS DO GÊNERO -->
+
+                <div class="space-y-4">
+                    <h3 class="font-bold text-lg text-slate-900">
+                        Todos os livros deste gênero
+                    </h3>
+
+                    <div
+                        id="genre-books-container"
+                        class="
+                            grid
+                            grid-cols-1
+                            md:grid-cols-2
+                            lg:grid-cols-4
+                            gap-6
+                        "
+                    >
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TELA DO SUBGÊNERO -->
+            <!-- ================================================= -->
+
+            <div
+                id="library-subgenre-view"
+                class="hidden space-y-8"
+            >
+
+                <button
+                    type="button"
+                    onclick="backToCurrentGenre()"
+                    class="
+                        text-indigo-600
+                        font-semibold
+                        flex
+                        items-center
+                        gap-1
+                        hover:underline
+                    "
+                >
+
+                    <i
+                        data-lucide="arrow-left"
+                        class="w-4 h-4"
+                    ></i>
+
+                    Voltar para o gênero
+
+                </button>
+
+
+                <div class="border-b pb-4">
+
+                    <p
+                        id="subgenre-parent-name"
+                        class="
+                            text-sm
+                            font-semibold
+                            text-indigo-600
+                            uppercase
+                        "
+                    ></p>
+
+                    <h2
+                        id="current-subgenre-title"
+                        class="
+                            text-2xl
+                            md:text-3xl
+                            font-extrabold
+                            text-slate-900
+                        "
+                    ></h2>
+
+                </div>
+
+
+                <div
+                    id="subgenre-books-container"
+                    class="
+                        grid
+                        grid-cols-1
+                        md:grid-cols-2
+                        lg:grid-cols-4
+                        gap-6
+                    "
+                >
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- MEUS EMPRÉSTIMOS -->
+            <!-- ================================================= -->
+
+            <div
+                class="
+                    border-t
+                    border-slate-200
+                    pt-8
+                    space-y-4
+                "
+            >
 
                 <div>
 
@@ -1408,10 +1715,11 @@
                     </h2>
 
                     <p class="text-sm text-slate-500">
-                        Acompanhe pedidos, prazo de devolução e status.
+                        Acompanhe seus pedidos, prazos e devoluções.
                     </p>
 
                 </div>
+
 
                 <div
                     id="my-loans-container"
