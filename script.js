@@ -6505,3 +6505,95 @@ document.addEventListener(
     'DOMContentLoaded',
     initializeApp
 );
+
+
+
+// Cole no script.js antes de initializeApp()
+let henriNewsAiBusy = false;
+
+function addHenriNewsAIMessage(type, text) {
+    const container = document.getElementById('ai-chat-messages');
+    if (!container) return;
+
+    const message = document.createElement('div');
+    message.className = type === 'user' ? 'ai-message ai-message-user' : 'ai-message ai-message-assistant';
+
+    const strong = document.createElement('strong');
+    strong.textContent = type === 'user' ? 'Você: ' : 'Assistente HenriNews: ';
+
+    const content = document.createElement('span');
+    content.textContent = text;
+
+    message.appendChild(strong);
+    message.appendChild(content);
+    container.appendChild(message);
+    container.scrollTop = container.scrollHeight;
+}
+
+function setHenriNewsAILoading(loading) {
+    henriNewsAiBusy = loading;
+    const button = document.getElementById('ai-send-btn');
+    const input = document.getElementById('ai-chat-input');
+
+    if (button) {
+        button.disabled = loading;
+        button.innerHTML = loading
+            ? '<span class="ai-loading-dot"></span> Pensando...'
+            : '<i data-lucide="sparkles" class="w-4 h-4"></i> Perguntar à IA';
+    }
+
+    if (input) input.disabled = loading;
+    renderIcons();
+}
+
+async function handleHenriNewsAI(e) {
+    e.preventDefault();
+    if (henriNewsAiBusy) return;
+
+    if (!currentUser) {
+        alert('Faça login para utilizar o Assistente HenriNews IA.');
+        switchTab('login');
+        return;
+    }
+
+    if (!db) {
+        alert('Não foi possível conectar ao sistema.');
+        return;
+    }
+
+    const input = document.getElementById('ai-chat-input');
+    if (!input) return;
+
+    const message = input.value.trim();
+    if (!message) return alert('Digite uma pergunta para a IA.');
+    if (message.length > 700) return alert('A pergunta deve ter no máximo 700 caracteres.');
+
+    addHenriNewsAIMessage('user', message);
+    input.value = '';
+    setHenriNewsAILoading(true);
+
+    try {
+        const { data, error } = await db.functions.invoke('henrinews-ai', {
+            body: { message }
+        });
+
+        if (error) {
+            console.error('Erro ao chamar a IA:', error);
+            addHenriNewsAIMessage('assistant', 'Não consegui responder agora. Tente novamente ou envie sua dúvida para a equipe de suporte.');
+            return;
+        }
+
+        if (!data?.answer) {
+            addHenriNewsAIMessage('assistant', 'Não consegui gerar uma resposta. Você pode enviar a dúvida para a equipe de suporte.');
+            return;
+        }
+
+        addHenriNewsAIMessage('assistant', data.answer);
+    } catch (error) {
+        console.error('Erro no Assistente HenriNews:', error);
+        addHenriNewsAIMessage('assistant', 'O Assistente HenriNews está indisponível no momento. Tente novamente mais tarde.');
+    } finally {
+        setHenriNewsAILoading(false);
+        input.focus();
+    }
+}

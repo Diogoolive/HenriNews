@@ -893,3 +893,15 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb {
 html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
     background-color: #64748b;
 }
+
+/* Cole no final do style.css */
+.ai-chat-messages { min-height: 150px; max-height: 360px; overflow-y: auto; }
+.ai-message { width: fit-content; max-width: 88%; padding: 10px 12px; border-radius: 14px; line-height: 1.5; font-size: .9rem; overflow-wrap: anywhere; }
+.ai-message-assistant { background: #eef2ff; color: #312e81; border-bottom-left-radius: 4px; }
+.ai-message-user { background: #4f46e5; color: white; margin-left: auto; border-bottom-right-radius: 4px; }
+.ai-loading-dot { width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.45); border-top-color: #fff; border-radius: 999px; animation: henrinews-ai-spin .8s linear infinite; }
+@keyframes henrinews-ai-spin { to { transform: rotate(360deg); } }
+html[data-theme="dark"] #henrinews-ai-card { background-color: #0f172a !important; border-color: #334155 !important; }
+html[data-theme="dark"] #ai-chat-messages { background-color: #111827 !important; border-color: #334155 !important; }
+html[data-theme="dark"] .ai-message-assistant { background-color: #1e1b4b; color: #e0e7ff; }
+html[data-theme="dark"] .ai-message-user { background-color: #4f46e5; color: #fff; }
