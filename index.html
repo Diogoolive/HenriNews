@@ -58,7 +58,7 @@
 
                 <div
                     class="flex items-center gap-2 cursor-pointer shrink-0"
-                    onclick="switchTab('feed')"
+                    onclick="switchTab('inicio')"
                 >
 
                     <i
@@ -76,6 +76,10 @@
                 <!-- MENU DO COMPUTADOR -->
 
                 <div class="hidden md:flex space-x-1 lg:space-x-4 items-center">
+                    <button onclick="switchTab('inicio')" class="hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition flex items-center gap-1">
+                        <i data-lucide="house" class="w-4 h-4"></i>
+                        Início
+                    </button>
 
                     <button
                         type="button"
@@ -511,19 +515,41 @@
     <!-- CONTEÚDO -->
     <!-- ===================================================== -->
 
-    <main
-        class="
-            flex-grow
-            max-w-7xl
-            w-full
-            mx-auto
-            px-4
-            sm:px-6
-            lg:px-8
-            py-4
-            sm:py-8
-        "
-    >
+    <main class=" flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+
+        <!-- ====================================================== -->
+        <!-- TELA INICIAL - CAPA DO JORNAL -->
+        <!-- ====================================================== -->
+
+        <section id="tab-inicio" class="tab-content active space-y-10">
+
+            <!-- CABEÇALHO -->
+            <div class="border-b border-slate-200 pb-5">
+                <div class="flex items-center gap-2 text-indigo-600 font-bold text-sm uppercase tracking-wider mb-2">
+                    <i data-lucide="newspaper" class="w-4 h-4"></i>
+                    Jornal Escolar
+                </div>
+
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    HenriNews
+                </h1>
+
+                <p class="text-slate-500 mt-1">
+                    Informação, acontecimentos e novidades da nossa escola.
+                </p>
+
+            </div>
+
+
+            <!-- CONTEÚDO DAS NOTÍCIAS -->
+            <div id="home-news-container">
+                <div class="text-center py-16 text-slate-400">
+                    Carregando as principais notícias...
+                </div>
+
+            </div>
+
+        </section>
 
 
         <!-- ================================================= -->
@@ -532,7 +558,7 @@
 
         <section
             id="tab-feed"
-            class="tab-content active space-y-8"
+            class="tab-content space-y-8"
         >
 
             <div
@@ -667,26 +693,9 @@
             "
         >
 
-            <button
-                type="button"
-                onclick="switchTab('feed')"
-                class="
-                    text-indigo-600
-                    font-medium
-                    flex
-                    items-center
-                    gap-1
-                    hover:underline
-                "
-            >
-
-                <i
-                    data-lucide="arrow-left"
-                    class="w-4 h-4"
-                ></i>
-
-                Voltar para o feed
-
+            <button class="text-indigo-600 font-medium flex items-center gap-1 hover:underline" onclick="returnFromArticle()">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Voltar
             </button>
 
 

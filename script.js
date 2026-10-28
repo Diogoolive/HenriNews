@@ -57,6 +57,7 @@ let userVotes = new Map();
 let adminArticles = [];
 
 let currentFilter = 'all';
+let articleReturnTab = 'feed';
 
 let currentLibraryGenreId = null;
 let currentLibrarySubgenreId = null;
@@ -587,18 +588,10 @@ function switchTab(tabId) {
     }
 
 
-    if (
-        tabId === 'feed'
-    ) {
+    if (tabId === 'inicio') renderHomeNews();
+    if (tabId === 'feed') renderArticles();
 
-        renderArticles();
-
-    }
-
-
-    if (
-        tabId === 'biblioteca'
-    ) {
+    if (tabId === 'biblioteca') {
 
         const searchInput =
             document.getElementById(
@@ -1329,9 +1322,9 @@ async function loadArticles() {
     }
 
 
-    articles =
-        data ||
-        [];
+    articles = data || [];
+
+    renderHomeNews();
 
 }
 
@@ -1398,6 +1391,547 @@ async function loadSavedArticles() {
 // ============================================================
 // 15. RENDERIZAR ARTIGOS
 // ============================================================
+
+// ============================================================
+// PÁGINA INICIAL - CAPA JORNALÍSTICA
+// ============================================================
+
+function renderHomeNews() {
+
+    const container =
+        document.getElementById('home-news-container');
+
+    if (!container) return;
+
+
+    if (!articles.length) {
+
+        container.innerHTML = `
+            <div
+                class="
+                    bg-white
+                    border
+                    border-slate-200
+                    rounded-2xl
+                    p-10
+                    text-center
+                    text-slate-500
+                "
+            >
+                <i
+                    data-lucide="newspaper"
+                    class="w-10 h-10 mx-auto mb-3 text-slate-300"
+                ></i>
+
+                Nenhuma notícia publicada no momento.
+            </div>
+        `;
+
+        renderIcons();
+
+        return;
+    }
+
+
+    // As notícias já vêm do Supabase da mais recente
+    // para a mais antiga.
+
+    const principal = articles[0];
+
+    const destaque1 =
+        articles.length > 1
+            ? articles[1]
+            : null;
+
+    const destaque2 =
+        articles.length > 2
+            ? articles[2]
+            : null;
+
+    const ultimas =
+        articles.slice(3, 9);
+
+
+    const resumo = (texto, tamanho = 150) => {
+
+        const valor =
+            String(texto || '');
+
+        return valor.length > tamanho
+            ? `${valor.substring(0, tamanho)}...`
+            : valor;
+
+    };
+
+
+    const noticiaSecundaria = (artigo) => {
+
+        if (!artigo) return '';
+
+        return `
+            <article
+                class="
+                    group
+                    cursor-pointer
+                    border-b
+                    border-slate-200
+                    pb-5
+                    last:border-b-0
+                "
+                onclick="viewArticleDetail(${artigo.id}, 'inicio')"
+            >
+
+                <img
+                    src="${safeImage(artigo.image_url)}"
+                    alt="Imagem da notícia"
+                    class="
+                        w-full
+                        h-40
+                        object-cover
+                        rounded-xl
+                        mb-3
+                    "
+                >
+
+                <span
+                    class="
+                        text-xs
+                        uppercase
+                        tracking-wider
+                        font-bold
+                        text-indigo-600
+                    "
+                >
+                    Destaque
+                </span>
+
+                <h2
+                    class="
+                        text-lg
+                        font-extrabold
+                        text-slate-900
+                        leading-tight
+                        mt-1
+                        group-hover:text-indigo-600
+                        transition
+                    "
+                >
+                    ${escapeHtml(artigo.title)}
+                </h2>
+
+                <p
+                    class="
+                        text-xs
+                        text-slate-500
+                        mt-2
+                    "
+                >
+                    ${formatDate(artigo.created_at)}
+                </p>
+
+            </article>
+        `;
+    };
+
+
+    const listaUltimas = ultimas.map(artigo => `
+
+        <article
+            class="
+                grid
+                grid-cols-[110px_1fr]
+                md:grid-cols-[180px_1fr]
+                gap-4
+                py-5
+                border-b
+                border-slate-200
+                cursor-pointer
+                group
+            "
+            onclick="viewArticleDetail(${artigo.id}, 'inicio')"
+        >
+
+            <img
+                src="${safeImage(artigo.image_url)}"
+                alt="Imagem da notícia"
+                class="
+                    w-full
+                    h-24
+                    md:h-28
+                    object-cover
+                    rounded-xl
+                "
+            >
+
+
+            <div class="min-w-0">
+
+                <span
+                    class="
+                        text-xs
+                        font-bold
+                        uppercase
+                        tracking-wider
+                        text-indigo-600
+                    "
+                >
+                    Notícias
+                </span>
+
+
+                <h3
+                    class="
+                        text-base
+                        md:text-xl
+                        font-extrabold
+                        leading-tight
+                        text-slate-900
+                        mt-1
+                        group-hover:text-indigo-600
+                        transition
+                    "
+                >
+                    ${escapeHtml(artigo.title)}
+                </h3>
+
+
+                <p
+                    class="
+                        hidden
+                        sm:block
+                        text-sm
+                        text-slate-500
+                        mt-2
+                        leading-relaxed
+                    "
+                >
+                    ${escapeHtml(
+                        resumo(
+                            artigo.content,
+                            130
+                        )
+                    )}
+                </p>
+
+
+                <p
+                    class="
+                        text-xs
+                        text-slate-400
+                        mt-2
+                    "
+                >
+                    ${formatDate(artigo.created_at)}
+                </p>
+
+            </div>
+
+        </article>
+
+    `).join('');
+
+
+    container.innerHTML = `
+
+        <!-- ================================================= -->
+        <!-- PRINCIPAIS DESTAQUES -->
+        <!-- ================================================= -->
+
+        <div
+            class="
+                grid
+                grid-cols-1
+                lg:grid-cols-3
+                gap-7
+                border-b
+                border-slate-300
+                pb-10
+            "
+        >
+
+
+            <!-- NOTÍCIA PRINCIPAL -->
+
+            <article
+                class="
+                    lg:col-span-2
+                    cursor-pointer
+                    group
+                "
+                onclick="viewArticleDetail(${principal.id}, 'inicio')"
+            >
+
+                <div
+                    class="
+                        relative
+                        overflow-hidden
+                        rounded-2xl
+                        bg-slate-900
+                    "
+                >
+
+                    <img
+                        src="${safeImage(principal.image_url)}"
+                        alt="Imagem da principal notícia"
+                        class="
+                            w-full
+                            h-[320px]
+                            md:h-[470px]
+                            object-cover
+                            group-hover:scale-[1.02]
+                            transition
+                            duration-500
+                        "
+                    >
+
+
+                    <!-- SOMBRA SOBRE A FOTO -->
+
+                    <div
+                        class="
+                            absolute
+                            inset-0
+                            bg-gradient-to-t
+                            from-black/90
+                            via-black/30
+                            to-transparent
+                        "
+                    ></div>
+
+
+                    <!-- TEXTO SOBRE A FOTO -->
+
+                    <div
+                        class="
+                            absolute
+                            bottom-0
+                            left-0
+                            right-0
+                            p-5
+                            md:p-8
+                            text-white
+                        "
+                    >
+
+                        <span
+                            class="
+                                inline-block
+                                bg-indigo-600
+                                px-3
+                                py-1
+                                rounded-md
+                                text-xs
+                                font-bold
+                                uppercase
+                                tracking-wider
+                                mb-3
+                            "
+                        >
+                            Principal
+                        </span>
+
+
+                        <h2
+                            class="
+                                text-2xl
+                                md:text-4xl
+                                font-extrabold
+                                leading-tight
+                            "
+                        >
+                            ${escapeHtml(principal.title)}
+                        </h2>
+
+
+                        <p
+                            class="
+                                text-sm
+                                md:text-base
+                                text-slate-200
+                                mt-3
+                                max-w-2xl
+                                hidden
+                                sm:block
+                            "
+                        >
+                            ${escapeHtml(
+                                resumo(
+                                    principal.content,
+                                    180
+                                )
+                            )}
+                        </p>
+
+
+                        <div
+                            class="
+                                flex
+                                items-center
+                                gap-2
+                                mt-4
+                                text-xs
+                                text-slate-300
+                            "
+                        >
+
+                            <i
+                                data-lucide="calendar"
+                                class="w-4 h-4"
+                            ></i>
+
+                            ${formatDate(
+                                principal.created_at
+                            )}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- DESTAQUES MENORES -->
+
+            <div class="space-y-5">
+
+                ${noticiaSecundaria(destaque1)}
+
+                ${noticiaSecundaria(destaque2)}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- ÚLTIMAS NOTÍCIAS -->
+        <!-- ================================================= -->
+
+        ${
+            ultimas.length
+                ? `
+                    <section class="pt-9">
+
+                        <div
+                            class="
+                                flex
+                                items-center
+                                justify-between
+                                gap-4
+                                mb-3
+                            "
+                        >
+
+                            <div>
+
+                                <span
+                                    class="
+                                        text-xs
+                                        uppercase
+                                        tracking-widest
+                                        font-bold
+                                        text-indigo-600
+                                    "
+                                >
+                                    HenriNews
+                                </span>
+
+
+                                <h2
+                                    class="
+                                        text-2xl
+                                        md:text-3xl
+                                        font-extrabold
+                                        text-slate-900
+                                    "
+                                >
+                                    Últimas notícias
+                                </h2>
+
+                            </div>
+
+
+                            <button
+                                onclick="switchTab('feed')"
+                                class="
+                                    text-sm
+                                    font-semibold
+                                    text-indigo-600
+                                    hover:text-indigo-700
+                                    flex
+                                    items-center
+                                    gap-1
+                                "
+                            >
+
+                                Ver todas
+
+                                <i
+                                    data-lucide="arrow-right"
+                                    class="w-4 h-4"
+                                ></i>
+
+                            </button>
+
+                        </div>
+
+
+                        <div>
+
+                            ${listaUltimas}
+
+                        </div>
+
+                    </section>
+                `
+                : ''
+        }
+
+
+        <!-- ================================================= -->
+        <!-- BOTÃO PARA O FEED -->
+        <!-- ================================================= -->
+
+        <div class="pt-8 text-center">
+
+            <button
+                onclick="switchTab('feed')"
+                class="
+                    inline-flex
+                    items-center
+                    gap-2
+                    bg-indigo-600
+                    hover:bg-indigo-700
+                    text-white
+                    font-semibold
+                    px-6
+                    py-3
+                    rounded-xl
+                    transition
+                "
+            >
+
+                <i
+                    data-lucide="newspaper"
+                    class="w-5 h-5"
+                ></i>
+
+                Ver todas as notícias no Feed
+
+            </button>
+
+        </div>
+
+    `;
+
+
+    renderIcons();
+
+}
 
 function renderArticles() {
 
@@ -1645,19 +2179,13 @@ function filterArticles(type) {
 // 16. DETALHE DO ARTIGO
 // ============================================================
 
-function viewArticleDetail(id) {
+function viewArticleDetail(id, origin = 'feed') {
 
-    const article =
-        articles.find(
-            item =>
-                item.id === id
-        );
+    articleReturnTab = origin;
 
+    const art = articles.find(a => a.id === id);
 
-    if (!article) {
-        return;
-    }
-
+    if (!art) return;
 
     const container =
         document.getElementById(
@@ -1718,6 +2246,9 @@ function viewArticleDetail(id) {
 
 }
 
+function returnFromArticle() {
+    switchTab(articleReturnTab || 'feed');
+}
 
 // ============================================================
 // 17. SALVAR ARTIGO
