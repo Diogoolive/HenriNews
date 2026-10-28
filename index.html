@@ -2515,204 +2515,461 @@
             </div>
 
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
-
-                <!-- FAQ -->
-
-                <div class="lg:col-span-2 space-y-4">
-
-                    <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-
-                        <i
-                            data-lucide="help-circle"
-                            class="w-5 h-5 text-indigo-600"
-                        ></i>
-
-                        Perguntas Frequentes (FAQ)
-
-                    </h2>
-
-
-                    <div class="bg-white p-5 rounded-xl border shadow-sm">
-
-                        <h3 class="font-bold mb-1">
-                            Como funciona a devolução de livros?
-                        </h3>
-
-                        <p class="text-sm text-slate-600 leading-relaxed">
-                            Você tem até 30 dias corridos para devolver o exemplar.
-                            O prazo aparece em “Meus Empréstimos”.
-                        </p>
-
-                    </div>
-
-
-                    <div class="bg-white p-5 rounded-xl border shadow-sm">
-
-                        <h3 class="font-bold mb-1">
-                            Quem pode escrever artigos no HenriNews?
-                        </h3>
-
-                        <p class="text-sm text-slate-600 leading-relaxed">
-                            A publicação é realizada pelos gestores autorizados
-                            do HenriNews.
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <!-- Cole dentro de #tab-ajuda, antes do suporte humano -->
-                <div id="henrinews-ai-card" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 mb-8">
-                    <div class="flex items-start gap-3">
-                        <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
-                            <i data-lucide="bot" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-xl font-bold text-slate-900">Assistente HenriNews IA</h2>
-                            <p class="text-sm text-slate-500">Tire dúvidas rápidas sobre o portal, biblioteca, empréstimos, enquetes, login e suporte.</p>
-                        </div>
-                    </div>
-  
-                    <div id="ai-chat-messages" class="ai-chat-messages bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3" aria-live="polite">
-                        <div class="ai-message ai-message-assistant"><strong>Assistente HenriNews:</strong> Olá! Posso ajudar com dúvidas sobre como usar o HenriNews.</div>
-                    </div>
-  
-                    <form id="ai-chat-form" onsubmit="handleHenriNewsAI(event)" class="space-y-3">
-                        <label for="ai-chat-input" class="block text-xs font-semibold text-slate-600 uppercase">Sua pergunta</label>
-                        <textarea id="ai-chat-input" rows="3" maxlength="700" placeholder="Ex.: Como faço para solicitar um livro?" class="w-full px-3 py-3 border border-slate-300 rounded-xl resize-none focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
-  
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <p class="text-xs text-slate-400">É necessário estar conectado para usar o assistente.</p>
-                            <button id="ai-send-btn" type="submit" class="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-xl font-semibold flex items-center justify-center gap-2">
-                                <i data-lucide="sparkles" class="w-4 h-4"></i> Perguntar à IA
-                            </button>
-                        </div>
-                    </form>
-  
-                    <div class="bg-amber-50 border border-amber-200 text-amber-800 rounded-xl p-3 text-xs">
-                        A IA pode cometer erros. Não envie senhas ou códigos de acesso. Para assuntos oficiais da escola, utilize também o suporte da equipe.
-                    </div>
-                </div>
-  
-
-
-                <!-- FORMULÁRIO -->
-
-                <div
-                    class="
-                        bg-white
-                        p-4
-                        sm:p-6
-                        rounded-2xl
-                        border
-                        shadow-sm
-                        space-y-4
-                        h-fit
-                    "
-                >
-
-                    <div>
-
-                        <h3 class="text-xl font-bold flex items-center gap-2">
-
+                <!-- ================================================= -->
+                <!-- COLUNA DA ESQUERDA -->
+                <!-- FAQ + IA -->
+                <!-- ================================================= -->
+            
+                <div class="lg:col-span-2 space-y-8">
+            
+                    <!-- ============================================= -->
+                    <!-- PERGUNTAS FREQUENTES -->
+                    <!-- ============================================= -->
+            
+                    <div class="space-y-4">
+            
+                        <h2
+                            class="
+                                text-xl
+                                font-bold
+                                text-slate-900
+                                flex
+                                items-center
+                                gap-2
+                                mb-2
+                            "
+                        >
                             <i
-                                data-lucide="message-square-plus"
-                                class="text-indigo-600"
+                                data-lucide="help-circle"
+                                class="w-5 h-5 text-indigo-600"
                             ></i>
-
-                            Enviar uma Pergunta
-
-                        </h3>
-
-                        <p class="text-xs text-slate-500">
-                            Nossa equipe responderá o mais breve possível.
-                        </p>
-
+            
+                            Perguntas Frequentes (FAQ)
+                        </h2>
+            
+            
+                        <div
+                            class="
+                                bg-white
+                                p-5
+                                rounded-xl
+                                border
+                                border-slate-200/60
+                                shadow-sm
+                            "
+                        >
+            
+                            <h3
+                                class="
+                                    font-bold
+                                    text-slate-900
+                                    mb-1
+                                    text-base
+                                "
+                            >
+                                Como funciona a devolução de livros?
+                            </h3>
+            
+                            <p
+                                class="
+                                    text-sm
+                                    text-slate-600
+                                    leading-relaxed
+                                "
+                            >
+                                Você tem até 30 dias corridos para devolver o exemplar.
+                                O prazo aparece em “Meus Empréstimos”.
+                            </p>
+            
+                        </div>
+            
+            
+                        <div
+                            class="
+                                bg-white
+                                p-5
+                                rounded-xl
+                                border
+                                border-slate-200/60
+                                shadow-sm
+                            "
+                        >
+            
+                            <h3
+                                class="
+                                    font-bold
+                                    text-slate-900
+                                    mb-1
+                                    text-base
+                                "
+                            >
+                                Quem pode escrever artigos no HenriNews?
+                            </h3>
+            
+                            <p
+                                class="
+                                    text-sm
+                                    text-slate-600
+                                    leading-relaxed
+                                "
+                            >
+                                A publicação é realizada pelos gestores autorizados
+                                do HenriNews.
+                            </p>
+            
+                        </div>
+            
                     </div>
-
-
-                    <form
-                        class="space-y-4"
-                        onsubmit="handleSendHelpQuestion(event)"
+            
+            
+                    <!-- ============================================= -->
+                    <!-- ASSISTENTE IA -->
+                    <!-- FICA EMBAIXO DO FAQ -->
+                    <!-- ============================================= -->
+            
+                    <div
+                        id="henrinews-ai-card"
+                        class="
+                            bg-white
+                            p-6
+                            rounded-2xl
+                            border
+                            border-slate-200
+                            shadow-sm
+                            space-y-4
+                        "
                     >
-
-                        <div>
-
-                            <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase">
-                                Seu Nome
-                            </label>
-
-                            <input
-                                id="help-nome"
-                                type="text"
-                                required
+            
+                        <div class="flex items-start gap-3">
+            
+                            <div
                                 class="
-                                    w-full
-                                    px-3
-                                    py-2
-                                    border
-                                    rounded-lg
-                                    focus:ring-2
-                                    focus:ring-indigo-500
-                                    focus:outline-none
+                                    w-11
+                                    h-11
+                                    rounded-xl
+                                    bg-indigo-100
+                                    text-indigo-600
+                                    flex
+                                    items-center
+                                    justify-center
+                                    shrink-0
                                 "
                             >
-
+                                <i
+                                    data-lucide="bot"
+                                    class="w-6 h-6"
+                                ></i>
+                            </div>
+            
+            
+                            <div>
+            
+                                <h2
+                                    class="
+                                        text-xl
+                                        font-bold
+                                        text-slate-900
+                                    "
+                                >
+                                    Assistente HenriNews IA
+                                </h2>
+            
+                                <p
+                                    class="
+                                        text-sm
+                                        text-slate-500
+                                    "
+                                >
+                                    Tire dúvidas rápidas sobre o portal,
+                                    biblioteca, empréstimos, enquetes,
+                                    login e suporte.
+                                </p>
+            
+                            </div>
+            
                         </div>
-
-
-                        <div>
-
-                            <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase">
-                                E-mail
-                            </label>
-
-                            <input
-                                id="help-email"
-                                type="email"
-                                required
+            
+            
+                        <div
+                            id="ai-chat-messages"
+                            class="
+                                ai-chat-messages
+                                bg-slate-50
+                                border
+                                border-slate-200
+                                rounded-xl
+                                p-4
+                                space-y-3
+                            "
+                            aria-live="polite"
+                        >
+            
+                            <div
                                 class="
-                                    w-full
-                                    px-3
-                                    py-2
-                                    border
-                                    rounded-lg
-                                    focus:ring-2
-                                    focus:ring-indigo-500
-                                    focus:outline-none
+                                    ai-message
+                                    ai-message-assistant
                                 "
                             >
-
+                                <strong>
+                                    Assistente HenriNews:
+                                </strong>
+            
+                                Olá! Posso ajudar com dúvidas sobre como usar o HenriNews.
+                            </div>
+            
                         </div>
-
-
-                        <div>
-
-                            <label class="block text-xs font-semibold text-slate-600 mb-1 uppercase">
-                                Sua Dúvida
+            
+            
+                        <form
+                            id="ai-chat-form"
+                            onsubmit="handleHenriNewsAI(event)"
+                            class="space-y-3"
+                        >
+            
+                            <label
+                                for="ai-chat-input"
+                                class="
+                                    block
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                    uppercase
+                                "
+                            >
+                                Sua pergunta
                             </label>
-
+            
+            
                             <textarea
-                                id="help-mensagem"
-                                rows="4"
-                                required
+                                id="ai-chat-input"
+                                rows="3"
+                                maxlength="700"
+                                placeholder="Ex.: Como faço para solicitar um livro?"
                                 class="
                                     w-full
                                     px-3
-                                    py-2
+                                    py-3
                                     border
-                                    rounded-lg
+                                    border-slate-300
+                                    rounded-xl
+                                    resize-none
                                     focus:ring-2
                                     focus:ring-indigo-500
                                     focus:outline-none
                                 "
                             ></textarea>
-
+            
+            
+                            <button
+                                id="ai-send-btn"
+                                type="submit"
+                                class="
+                                    w-full
+                                    bg-indigo-600
+                                    hover:bg-indigo-700
+                                    text-white
+                                    px-5
+                                    py-3
+                                    rounded-xl
+                                    font-semibold
+                                    flex
+                                    items-center
+                                    justify-center
+                                    gap-2
+                                "
+                            >
+            
+                                <i
+                                    data-lucide="sparkles"
+                                    class="w-4 h-4"
+                                ></i>
+            
+                                Perguntar à IA
+            
+                            </button>
+            
+                        </form>
+            
+            
+                        <div
+                            class="
+                                bg-amber-50
+                                border
+                                border-amber-200
+                                text-amber-800
+                                rounded-xl
+                                p-3
+                                text-xs
+                            "
+                        >
+                            A IA pode cometer erros. Não envie senhas ou códigos
+                            de acesso. Para assuntos oficiais da escola, utilize
+                            também o suporte da equipe.
                         </div>
-
-
+            
+                    </div>
+            
+                </div>
+            
+            
+            
+                <!-- ================================================= -->
+                <!-- COLUNA DA DIREITA -->
+                <!-- SUPORTE HUMANO -->
+                <!-- ================================================= -->
+            
+                <div
+                    class="
+                        bg-white
+                        p-6
+                        rounded-2xl
+                        border
+                        border-slate-200/70
+                        shadow-sm
+                        space-y-4
+                        h-fit
+                    "
+                >
+            
+                    <div class="space-y-1">
+            
+                        <h3
+                            class="
+                                text-xl
+                                font-bold
+                                text-slate-900
+                                flex
+                                items-center
+                                gap-2
+                            "
+                        >
+            
+                            <i
+                                data-lucide="message-square-plus"
+                                class="text-indigo-600"
+                            ></i>
+            
+                            Enviar uma Pergunta
+            
+                        </h3>
+            
+            
+                        <p
+                            class="
+                                text-xs
+                                text-slate-500
+                            "
+                        >
+                            Nossa equipe responderá o mais breve possível.
+                        </p>
+            
+                    </div>
+            
+            
+                    <form
+                        onsubmit="handleSendHelpQuestion(event)"
+                        class="space-y-4"
+                    >
+            
+                        <div>
+            
+                            <label
+                                class="
+                                    block
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                    mb-1
+                                    uppercase
+                                "
+                            >
+                                Seu Nome
+                            </label>
+            
+                            <input
+                                type="text"
+                                id="help-nome"
+                                required
+                                class="
+                                    w-full
+                                    px-3
+                                    py-2
+                                    border
+                                    rounded-lg
+                                    text-sm
+                                "
+                            >
+            
+                        </div>
+            
+            
+                        <div>
+            
+                            <label
+                                class="
+                                    block
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                    mb-1
+                                    uppercase
+                                "
+                            >
+                                E-mail
+                            </label>
+            
+                            <input
+                                type="email"
+                                id="help-email"
+                                required
+                                class="
+                                    w-full
+                                    px-3
+                                    py-2
+                                    border
+                                    rounded-lg
+                                    text-sm
+                                "
+                            >
+            
+                        </div>
+            
+            
+                        <div>
+            
+                            <label
+                                class="
+                                    block
+                                    text-xs
+                                    font-semibold
+                                    text-slate-600
+                                    mb-1
+                                    uppercase
+                                "
+                            >
+                                Sua dúvida
+                            </label>
+            
+                            <textarea
+                                id="help-mensagem"
+                                rows="5"
+                                required
+                                class="
+                                    w-full
+                                    px-3
+                                    py-2
+                                    border
+                                    rounded-lg
+                                    text-sm
+                                    resize-none
+                                "
+                            ></textarea>
+            
+                        </div>
+            
+            
                         <button
                             type="submit"
                             class="
@@ -2720,20 +2977,21 @@
                                 bg-indigo-600
                                 hover:bg-indigo-700
                                 text-white
-                                font-medium
-                                py-2.5
+                                py-3
                                 rounded-xl
-                                transition
+                                font-semibold
                             "
                         >
                             Enviar Pergunta
                         </button>
-
+            
                     </form>
-
+            
                 </div>
-
+            
             </div>
+
+
 
         </section>
 
